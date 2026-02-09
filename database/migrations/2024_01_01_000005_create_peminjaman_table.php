@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id('id_peminjaman');
             $table->foreignId('user_id')->constrained('users')->onDelete('restrict');
             $table->foreignId('petugas_id')->nullable()->constrained('users')->onDelete('restrict');
-            $table->date('tanggal_pinjam');
-            $table->date('tanggal_kembali_rencana');
+            $table->datetime('tanggal_pinjam');
+            $table->datetime('tanggal_kembali_rencana');
             $table->enum('status', ['pending', 'disetujui', 'ditolak', 'selesai', 'batal'])->default('pending');
             $table->text('catatan')->nullable();
             $table->timestamps();

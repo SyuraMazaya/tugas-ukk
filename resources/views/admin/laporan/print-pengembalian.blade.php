@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Pengembalian - SIPINJAM</title>
+    <title>Laporan Pengembalian - SIJAMAT-PRO</title>
     <style>
         body { font-family: Arial, sans-serif; font-size: 12px; }
         .header { text-align: center; margin-bottom: 20px; }

@@ -72,12 +72,24 @@
                             </span>
                         </p>
                         @if($peminjaman->status === 'disetujui' && $peminjaman->tanggal_kembali_rencana->isPast())
-                            <div class="mt-2 inline-flex items-center px-3 py-1 rounded-lg bg-rose-50 text-rose-700 text-sm font-medium">
+                            @php
+                                $lateDuration = formatLateDuration($peminjaman->tanggal_kembali_rencana);
+                                $estimatedDenda = hitungDendaKeterlambatan(
+                                    $lateDuration['days'], 
+                                    $lateDuration['hours'], 
+                                    $lateDuration['minutes']
+                                );
+                            @endphp
+                            <div class="mt-2 inline-flex items-center px-3 py-1 rounded-lg bg-rose-50 text-rose-700 text-sm font-medium" 
+                                 data-return-date="{{ $peminjaman->tanggal_kembali_rencana->toIso8601String() }}"
+                                 data-denda-rate="{{ getTarifDendaAktif() }}">
                                 <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                                 </svg>
-                                Terlambat {{ $peminjaman->tanggal_kembali_rencana->diffInDays(now()) }} hari 
-                                (Est. denda: Rp {{ number_format($peminjaman->tanggal_kembali_rencana->diffInDays(now()) * 1000, 0, ',', '.') }})
+                                <span class="late-duration">Terlambat {{ $lateDuration['formatted'] }}</span>
+                                <span class="ml-2 text-rose-600">
+                                    (Est. denda: <span class="late-fine">Rp {{ number_format($estimatedDenda, 0, ',', '.') }}</span>)
+                                </span>
                             </div>
                         @endif
                         @if($peminjaman->pengembalian)
@@ -150,4 +162,60 @@
             {{ $peminjamans->links() }}
         </div>
     @endif
+
+    @push('scripts')
+    <script>
+        // Realtime late duration and fine calculator
+        function updateLateDurations() {
+            const lateElements = document.querySelectorAll('[data-return-date]');
+            
+            lateElements.forEach(element => {
+                const returnDate = new Date(element.dataset.returnDate);
+                const dendaRate = parseFloat(element.dataset.dendaRate);
+                const now = new Date();
+                
+                if (now <= returnDate) return;
+                
+                // Calculate difference
+                const diff = now - returnDate;
+                const totalMinutes = Math.floor(diff / 60000);
+                const totalHours = Math.floor(totalMinutes / 60);
+                const days = Math.floor(totalHours / 24);
+                const hours = totalHours % 24;
+                const minutes = totalMinutes % 60;
+                
+                // Format duration
+                let formatted = [];
+                if (days > 0) formatted.push(days + ' hari');
+                if (hours > 0) formatted.push(hours + ' jam');
+                if (minutes > 0) formatted.push(minutes + ' menit');
+                
+                const durationText = formatted.length > 0 ? formatted.join(' ') : '0 menit';
+                
+                // Calculate fine (per jam, dibulatkan ke atas)
+                const dendaPerJam = dendaRate / 24;
+                const totalJamCeiling = Math.ceil((days * 24) + hours + (minutes / 60));
+                const estimatedFine = totalJamCeiling * dendaPerJam;
+                
+                // Update DOM
+                const durationSpan = element.querySelector('.late-duration');
+                const fineSpan = element.querySelector('.late-fine');
+                
+                if (durationSpan) {
+                    durationSpan.textContent = 'Terlambat ' + durationText;
+                }
+                
+                if (fineSpan) {
+                    fineSpan.textContent = 'Rp ' + Math.round(estimatedFine).toLocaleString('id-ID');
+                }
+            });
+        }
+        
+        // Update immediately
+        updateLateDurations();
+        
+        // Update every minute for real-time tracking
+        setInterval(updateLateDurations, 60000);
+    </script>
+    @endpush
 </x-layouts.app>

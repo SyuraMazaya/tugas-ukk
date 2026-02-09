@@ -28,7 +28,9 @@
 <div class="bg-white rounded-xl shadow-sm ring-1 ring-slate-200/50 p-6 hover:shadow-md transition-smooth">
     <div class="flex items-center">
         <div class="flex-shrink-0 p-3 rounded-xl {{ $colorClasses }} shadow-lg ring-4 {{ $ringColor }}">
-            @if($icon)
+            @if($slot->isNotEmpty())
+                {{ $slot }}
+            @elseif($icon)
                 {!! $icon !!}
             @else
                 @switch($color)
@@ -39,7 +41,7 @@
                         @break
                     @case('green')
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
                         @break
                     @case('purple')

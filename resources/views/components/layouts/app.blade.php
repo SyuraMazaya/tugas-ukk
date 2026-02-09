@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? 'Sistem Peminjaman Alat' }} - SIPINJAM</title>
+    <title>{{ $title ?? 'Sistem Peminjaman Alat' }} - SIJAMAT-PRO</title>
     
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -28,7 +28,7 @@
         >
             <!-- Logo -->
             <div class="flex items-center justify-center h-16 bg-gray-900">
-                <span class="text-white text-xl font-bold">SIPINJAM</span>
+                <span class="text-white text-xl font-bold">SIJAMAT-PRO</span>
             </div>
             
             <!-- Navigation -->

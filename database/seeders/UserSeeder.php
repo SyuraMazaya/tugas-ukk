@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
             [
                 'role_id' => $adminRole->id,
                 'name' => 'Administrator',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('adminadmin'),
             ]
         );
 
@@ -35,36 +35,17 @@ class UserSeeder extends Seeder
             [
                 'role_id' => $petugasRole->id,
                 'name' => 'Petugas Inventaris',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('adminadmin'),
             ]
         );
 
-        // Create Peminjam (Siswa)
+        // Create Peminjam
         User::firstOrCreate(
-            ['username' => 'siswa01'],
+            ['username' => 'peminjam'],
             [
                 'role_id' => $peminjamRole->id,
-                'name' => 'Ahmad Siswa',
-                'password' => Hash::make('password'),
-            ]
-        );
-
-        User::firstOrCreate(
-            ['username' => 'siswa02'],
-            [
-                'role_id' => $peminjamRole->id,
-                'name' => 'Budi Pelajar',
-                'password' => Hash::make('password'),
-            ]
-        );
-
-        // Create Peminjam (Guru)
-        User::firstOrCreate(
-            ['username' => 'guru01'],
-            [
-                'role_id' => $peminjamRole->id,
-                'name' => 'Pak Dosen',
-                'password' => Hash::make('password'),
+                'name' => 'Peminjam',
+                'password' => Hash::make('adminadmin'),
             ]
         );
     }

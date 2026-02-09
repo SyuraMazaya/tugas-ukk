@@ -181,38 +181,48 @@
                     </div>
                     
                     @php
-                        $daysLate = max(0, now()->diffInDays($peminjaman->tanggal_kembali_rencana, false) * -1);
-                        $estimatedDenda = $daysLate * 1000;
+                        $lateDuration = formatLateDuration($peminjaman->tanggal_kembali_rencana);
+                        $tarifDenda = getTarifDendaAktif();
+                        $estimatedDenda = hitungDendaKeterlambatan(
+                            $lateDuration['days'], 
+                            $lateDuration['hours'], 
+                            $lateDuration['minutes']
+                        );
+                        $hasLate = $lateDuration['days'] > 0 || $lateDuration['hours'] > 0 || $lateDuration['minutes'] > 0;
                     @endphp
-                    @if($daysLate > 0)
-                        <div class="text-center py-4">
-                            <p class="text-3xl font-bold text-rose-600">Rp {{ number_format($estimatedDenda, 0, ',', '.') }}</p>
-                            <p class="text-sm text-slate-500 mt-2">{{ $daysLate }} hari keterlambatan</p>
-                            <p class="text-xs text-slate-400 mt-1">(Rp 1.000/hari)</p>
-                        </div>
-                        <div class="bg-rose-50 border border-rose-200 rounded-xl p-4 mt-4">
-                            <div class="flex items-start">
-                                <svg class="w-5 h-5 text-rose-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                                </svg>
-                                <p class="ml-2 text-sm text-rose-800">
-                                    Segera kembalikan alat ke petugas untuk menghindari denda yang lebih besar.
-                                </p>
+                    
+                    <div id="denda-realtime" 
+                         data-return-date="{{ $peminjaman->tanggal_kembali_rencana->toIso8601String() }}"
+                         data-denda-rate="{{ $tarifDenda }}">
+                        @if($hasLate)
+                            <div class="text-center py-4">
+                                <p class="text-3xl font-bold text-rose-600 late-amount">Rp {{ number_format($estimatedDenda, 0, ',', '.') }}</p>
+                                <p class="text-sm text-slate-500 mt-2 late-duration">{{ $lateDuration['formatted'] }}</p>
+                                <p class="text-xs text-slate-400 mt-1">(Rp {{ number_format($tarifDenda, 0, ',', '.') }}/hari atau Rp {{ number_format($tarifDenda/24, 0, ',', '.') }}/jam)</p>
                             </div>
-                        </div>
-                    @else
-                        <div class="text-center py-4">
-                            <p class="text-3xl font-bold text-emerald-600">Rp 0</p>
-                            <p class="text-sm text-slate-500 mt-2">Belum ada keterlambatan</p>
-                        </div>
-                        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-4">
-                            <div class="flex items-start">
-                                <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <p class="ml-2 text-sm text-blue-800">
-                                    Batas pengembalian: {{ $peminjaman->tanggal_kembali_rencana->format('d M Y') }}
-                                </p>
+                            <div class="bg-rose-50 border border-rose-200 rounded-xl p-4 mt-4">
+                                <div class="flex items-start">
+                                    <svg class="w-5 h-5 text-rose-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                    </svg>
+                                    <p class="ml-2 text-sm text-rose-800">
+                                        Segera kembalikan alat ke petugas untuk menghindari denda yang lebih besar. Denda dihitung per jam dan akan terus bertambah!
+                                    </p>
+                                </div>
+                            </div>
+                        @else
+                            <div class="text-center py-4">
+                                <p class="text-3xl font-bold text-emerald-600">Rp 0</p>
+                                <p class="text-sm text-slate-500 mt-2">Belum ada keterlambatan</p>
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-4">
+                                <div class="flex items-start">
+                                    <svg class="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    <p class="ml-2 text-sm text-blue-800">
+                                        Batas pengembalian: {{ $peminjaman->tanggal_kembali_rencana->format('d M Y H:i') }}
+                                    </p>
                             </div>
                         </div>
                     @endif
@@ -262,4 +272,59 @@
             @endif
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+        // Realtime denda calculator for detail page
+        function updateDendaRealtime() {
+            const dendaElement = document.getElementById('denda-realtime');
+            if (!dendaElement) return;
+            
+            const returnDate = new Date(dendaElement.dataset.returnDate);
+            const dendaRate = parseFloat(dendaElement.dataset.dendaRate);
+            const now = new Date();
+            
+            if (now <= returnDate) return;
+            
+            // Calculate difference
+            const diff = now - returnDate;
+            const totalMinutes = Math.floor(diff / 60000);
+            const totalHours = Math.floor(totalMinutes / 60);
+            const days = Math.floor(totalHours / 24);
+            const hours = totalHours % 24;
+            const minutes = totalMinutes % 60;
+            
+            // Format duration
+            let formatted = [];
+            if (days > 0) formatted.push(days + ' hari');
+            if (hours > 0) formatted.push(hours + ' jam');
+            if (minutes > 0) formatted.push(minutes + ' menit');
+            
+            const durationText = formatted.length > 0 ? formatted.join(' ') : '0 menit';
+            
+            // Calculate fine (per jam, dibulatkan ke atas)
+            const dendaPerJam = dendaRate / 24;
+            const totalJamCeiling = Math.ceil((days * 24) + hours + (minutes / 60));
+            const estimatedFine = totalJamCeiling * dendaPerJam;
+            
+            // Update DOM
+            const amountElement = dendaElement.querySelector('.late-amount');
+            const durationElement = dendaElement.querySelector('.late-duration');
+            
+            if (amountElement) {
+                amountElement.textContent = 'Rp ' + Math.round(estimatedFine).toLocaleString('id-ID');
+            }
+            
+            if (durationElement) {
+                durationElement.textContent = durationText;
+            }
+        }
+        
+        // Update immediately on page load
+        updateDendaRealtime();
+        
+        // Update every minute
+        setInterval(updateDendaRealtime, 60000);
+    </script>
+    @endpush
 </x-layouts.app>

@@ -11,10 +11,26 @@
     
     <!-- Statistics -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <x-stat-card label="Total Peminjaman" :value="$peminjamanStats['total']" color="indigo" icon="clipboard-list" />
-        <x-stat-card label="Peminjaman Aktif" :value="$peminjamanStats['disetujui']" color="amber" icon="clock" />
-        <x-stat-card label="Total Pengembalian" :value="$pengembalianStats['total_pengembalian']" color="emerald" icon="check-circle" />
-        <x-stat-card label="Total Denda" :value="'Rp ' . number_format($pengembalianStats['total_denda'], 0, ',', '.')" color="rose" icon="cash" />
+        <x-stat-card label="Total Peminjaman" :value="$peminjamanStats['total']" color="indigo">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+        </x-stat-card>
+        <x-stat-card label="Peminjaman Aktif" :value="$peminjamanStats['disetujui']" color="amber">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+        </x-stat-card>
+        <x-stat-card label="Total Pengembalian" :value="$pengembalianStats['total_pengembalian']" color="emerald">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+        </x-stat-card>
+        <x-stat-card label="Total Denda" :value="'Rp ' . number_format($pengembalianStats['total_denda'], 0, ',', '.')" color="rose">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+        </x-stat-card>
     </div>
     
     <!-- Report Links -->

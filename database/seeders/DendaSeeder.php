@@ -17,7 +17,7 @@ class DendaSeeder extends Seeder
             ['nama_denda' => 'Denda Keterlambatan Pengembalian'],
             [
                 'deskripsi' => 'Denda yang dikenakan untuk setiap hari keterlambatan pengembalian barang peminjaman',
-                'jumlah_denda' => 1000,
+                'jumlah_denda' => 24000,
                 'is_active' => true,
             ]
         );

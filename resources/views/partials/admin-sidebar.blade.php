@@ -84,7 +84,7 @@
 <div class="mt-auto pt-3 pb-2">
     <div class="mx-2 px-3 py-2 bg-slate-700/30 rounded-lg border border-slate-600/20">
         <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-400 text-xs">SIPINJAM v1.0</span>
+            <span class="text-slate-400 text-xs">SIJAMAT-PRO v1.0</span>
             <span class="text-slate-500 text-xs">© 2026</span>
         </div>
         <div class="mt-1.5 flex items-center gap-1 text-slate-500">
