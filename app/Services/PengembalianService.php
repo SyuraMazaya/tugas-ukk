@@ -52,8 +52,9 @@ class PengembalianService
         $dendaAktif = Denda::where('is_active', true)->first();
         $dendaPerHari = $dendaAktif ? $dendaAktif->jumlah_denda : self::DENDA_PER_HARI;
 
-        $selisihHari = $tanggalKembali->diffInDays($tanggalRencana);
-        return $selisihHari * $dendaPerHari;
+        // Calculate days late (ensure positive value)
+        $selisihHari = $tanggalRencana->diffInDays($tanggalKembali);
+        return abs($selisihHari * $dendaPerHari);
     }
 
     /**
