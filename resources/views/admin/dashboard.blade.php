@@ -3,7 +3,7 @@
         @include('partials.admin-sidebar')
     </x-slot:sidebar>
     
-    <!-- Page Header -->
+    <!-- Page Headers -->
     <div class="mb-8">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
