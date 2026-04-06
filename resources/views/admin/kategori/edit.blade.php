@@ -16,7 +16,7 @@
         <p class="mt-1 text-slate-500">Perbarui informasi kategori: <span class="font-medium text-slate-700">{{ $kategori->nama_kategori }}</span></p>
     </div>
     
-    <x-card class="max-w-2xl">
+    <x-card class="max-w-2xl mx-auto">
         <form method="POST" action="{{ route('admin.kategori.update', $kategori->id_kategori) }}">
             @csrf
             @method('PUT')

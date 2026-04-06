@@ -24,6 +24,9 @@ class StorePengembalianRequest extends FormRequest
         return [
             'tanggal_kembali_real' => ['required', 'date'],
             'catatan_kondisi' => ['nullable', 'string', 'max:1000'],
+            'custom_denda' => ['nullable', 'numeric', 'min:0'],
+            'kondisi_alat' => ['nullable', 'array'],
+            'kondisi_alat.*' => ['nullable', 'in:baik,rusak_ringan,rusak'],
         ];
     }
 
@@ -36,6 +39,9 @@ class StorePengembalianRequest extends FormRequest
             'tanggal_kembali_real.required' => 'Tanggal pengembalian wajib diisi.',
             'tanggal_kembali_real.date' => 'Format tanggal tidak valid.',
             'catatan_kondisi.max' => 'Catatan kondisi maksimal 1000 karakter.',
+            'custom_denda.numeric' => 'Nominal denda harus berupa angka.',
+            'custom_denda.min' => 'Nominal denda tidak boleh negatif.',
+            'kondisi_alat.*.in' => 'Kondisi alat tidak valid.',
         ];
     }
 }

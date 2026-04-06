@@ -16,7 +16,7 @@
         <p class="mt-1 text-slate-500">Perbarui informasi alat: <span class="font-medium text-slate-700">{{ $alat->nama_alat }}</span></p>
     </div>
     
-    <x-card class="max-w-2xl">
+    <x-card class="max-w-2xl mx-auto">
         <form method="POST" action="{{ route('admin.alat.update', $alat->id_alat) }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')

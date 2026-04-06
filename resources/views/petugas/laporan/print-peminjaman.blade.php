@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Pengembalian - SIJAMAT-PRO</title>
+    <title>Laporan Peminjaman - SIJAMAT-PRO</title>
     <style>
         * {
             margin: 0;
@@ -24,7 +24,7 @@
             text-align: center; 
             margin-bottom: 25px;
             padding-bottom: 15px;
-            border-bottom: 3px double #059669;
+            border-bottom: 3px double #4f46e5;
         }
         .header .logo-area {
             margin-bottom: 10px;
@@ -50,13 +50,13 @@
             border-top: 1px solid #e2e8f0;
         }
         .summary-box {
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-            border: 1px solid #a7f3d0;
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+            border: 1px solid #c7d2fe;
             border-radius: 8px;
             padding: 12px 15px;
             margin-bottom: 20px;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
         }
         .summary-item {
@@ -66,15 +66,12 @@
         .summary-item .value {
             font-size: 18px;
             font-weight: 700;
-            color: #059669;
-        }
-        .summary-item .value.denda {
-            color: #dc2626;
+            color: #4f46e5;
         }
         .summary-item .label {
             font-size: 9px;
             text-transform: uppercase;
-            color: #10b981;
+            color: #6366f1;
             letter-spacing: 0.5px;
         }
         table { 
@@ -100,17 +97,20 @@
             background-color: #f8fafc;
         }
         tbody tr:hover {
-            background-color: #ecfdf5;
+            background-color: #eef2ff;
         }
-        .denda-badge {
+        .status-badge {
             display: inline-block;
             padding: 3px 8px;
             border-radius: 4px;
             font-size: 9px;
             font-weight: 600;
+            text-transform: uppercase;
         }
-        .denda-ada { background: #fee2e2; color: #991b1b; }
-        .denda-tidak { background: #f1f5f9; color: #64748b; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-disetujui { background: #dbeafe; color: #1e40af; }
+        .status-ditolak { background: #fee2e2; color: #991b1b; }
+        .status-selesai { background: #d1fae5; color: #065f46; }
         .footer { 
             margin-top: 30px; 
             padding-top: 15px;
@@ -124,16 +124,6 @@
         }
         .footer-right {
             text-align: right;
-        }
-        .total-box {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            padding: 8px 15px;
-            border-radius: 6px;
-            margin-top: 10px;
-        }
-        .total-box strong {
-            color: #dc2626;
         }
         .signature-area {
             margin-top: 40px;
@@ -176,29 +166,26 @@
         <div class="header">
             <div class="logo-area">
                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin: 0 auto;">
-                    <rect width="40" height="40" rx="8" fill="#059669"/>
-                    <path d="M14 20L18 24L26 16" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect width="40" height="40" rx="8" fill="#4f46e5"/>
+                    <path d="M20 10L28 14V22L20 30L12 22V14L20 10Z" stroke="white" stroke-width="2" fill="none"/>
                 </svg>
             </div>
-            <h1>Laporan Pengembalian Alat</h1>
+            <h1>Laporan Peminjaman Alat</h1>
             <p class="subtitle">SIJAMAT-PRO - Sistem Peminjaman Alat Produktif Jurusan</p>
             <p class="date">Dicetak pada: {{ now()->translatedFormat('l, d F Y - H:i') }} WIB</p>
         </div>
 
-        @php $totalDenda = 0; @endphp
-        @foreach($pengembalians as $pengembalian)
-            @php $totalDenda += $pengembalian->denda; @endphp
-        @endforeach
-
         <div class="summary-box">
             <div class="summary-item">
-                <div class="value">{{ $pengembalians->total() }}</div>
-                <div class="label">Total Pengembalian</div>
+                <div class="value">{{ $peminjamans->total() }}</div>
+                <div class="label">Total Data</div>
             </div>
+            @if($status)
             <div class="summary-item">
-                <div class="value denda">Rp {{ number_format($totalDenda, 0, ',', '.') }}</div>
-                <div class="label" style="color: #dc2626;">Total Denda</div>
+                <div class="value" style="color: #059669;">{{ ucfirst($status) }}</div>
+                <div class="label">Filter Status</div>
             </div>
+            @endif
         </div>
         
         <table>
@@ -206,36 +193,40 @@
                 <tr>
                     <th style="width: 40px;">No</th>
                     <th>Peminjam</th>
-                    <th style="width: 90px;">Tgl Kembali</th>
-                    <th style="width: 100px;">Denda</th>
-                    <th style="width: 120px;">Petugas</th>
-                    <th>Catatan Kondisi</th>
+                    <th style="width: 90px;">Tgl Pinjam</th>
+                    <th style="width: 90px;">Rencana Kembali</th>
+                    <th>Alat Dipinjam</th>
+                    <th style="width: 80px;">Status</th>
                 </tr>
             </thead>
             <tbody>
-                @forelse($pengembalians as $index => $pengembalian)
+                @forelse($peminjamans as $index => $peminjaman)
                     <tr>
                         <td style="text-align: center;">{{ $index + 1 }}</td>
                         <td>
-                            <strong>{{ $pengembalian->peminjaman->user->name }}</strong>
+                            <strong>{{ $peminjaman->user->name }}</strong><br>
+                            <span style="color: #64748b; font-size: 9px;">{{ $peminjaman->user->username }}</span>
                         </td>
-                        <td>{{ $pengembalian->tanggal_kembali_real->format('d/m/Y') }}</td>
+                        <td>{{ $peminjaman->tanggal_pinjam->format('d/m/Y') }}</td>
+                        <td>{{ $peminjaman->tanggal_kembali_rencana->format('d/m/Y') }}</td>
                         <td>
-                            @if($pengembalian->denda > 0)
-                                <span class="denda-badge denda-ada">
-                                    Rp {{ number_format($pengembalian->denda, 0, ',', '.') }}
+                            @foreach($peminjaman->detailPeminjaman as $detail)
+                                <span style="background: #f1f5f9; padding: 2px 6px; border-radius: 3px; margin-right: 3px; white-space: nowrap;">
+                                    {{ $detail->alat->nama_alat }} <strong>({{ $detail->jumlah }})</strong>
                                 </span>
-                            @else
-                                <span class="denda-badge denda-tidak">Rp 0</span>
-                            @endif
+                                @if(!$loop->last)<br>@endif
+                            @endforeach
                         </td>
-                        <td>{{ $pengembalian->petugas->name }}</td>
-                        <td>{{ $pengembalian->catatan_kondisi ?? '-' }}</td>
+                        <td>
+                            <span class="status-badge status-{{ $peminjaman->status }}">
+                                {{ $peminjaman->status_label }}
+                            </span>
+                        </td>
                     </tr>
                 @empty
                     <tr>
                         <td colspan="6" style="text-align: center; padding: 30px;">
-                            <em style="color: #94a3b8;">Tidak ada data pengembalian</em>
+                            <em style="color: #94a3b8;">Tidak ada data peminjaman</em>
                         </td>
                     </tr>
                 @endforelse
@@ -248,20 +239,17 @@
                 Sistem Peminjaman Alat Produktif
             </div>
             <div class="footer-right">
-                <strong>Total Pengembalian:</strong> {{ $pengembalians->total() }} data<br>
-                <div class="total-box">
-                    <strong>Total Denda: Rp {{ number_format($totalDenda, 0, ',', '.') }}</strong>
-                </div>
+                <strong>Total Data:</strong> {{ $peminjamans->total() }} peminjaman
             </div>
         </div>
 
         <div class="signature-area">
             <div class="signature-box">
                 <p style="font-size: 10px; color: #64748b;">{{ now()->translatedFormat('d F Y') }}</p>
-                <p style="font-size: 10px; margin-top: 5px;">Administrator,</p>
+                <p style="font-size: 10px; margin-top: 5px;">Petugas,</p>
                 <div class="signature-line"></div>
                 <p class="signature-name">{{ Auth::user()->name }}</p>
-                <p class="signature-title">Admin Sistem</p>
+                <p class="signature-title">Petugas Peminjaman</p>
             </div>
         </div>
     </div>

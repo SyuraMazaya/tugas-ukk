@@ -114,9 +114,72 @@
                                    class="w-full px-4 py-3 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
                         </div>
                         
+                        <!-- Kondisi Alat per Item -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-3">Kondisi Alat Saat Dikembalikan</label>
+                            <div class="space-y-3">
+                                @foreach($peminjaman->detailPeminjaman as $detail)
+                                    <div class="bg-slate-50 rounded-xl p-4">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span class="text-sm font-medium text-slate-800">{{ $detail->alat->nama_alat }}</span>
+                                            <span class="text-xs text-slate-500">{{ $detail->jumlah }} unit</span>
+                                        </div>
+                                        <div class="flex flex-wrap gap-2">
+                                            <label class="relative cursor-pointer">
+                                                <input type="radio" name="kondisi_alat[{{ $detail->alat_id }}]" value="baik" class="peer sr-only" {{ $detail->alat->kondisi === 'baik' ? 'checked' : '' }}>
+                                                <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold border-2 border-transparent bg-white ring-1 ring-slate-200 peer-checked:ring-2 peer-checked:ring-emerald-500 peer-checked:bg-emerald-50 peer-checked:text-emerald-700 transition-all">
+                                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                    Baik
+                                                </span>
+                                            </label>
+                                            <label class="relative cursor-pointer">
+                                                <input type="radio" name="kondisi_alat[{{ $detail->alat_id }}]" value="rusak_ringan" class="peer sr-only" {{ $detail->alat->kondisi === 'rusak_ringan' ? 'checked' : '' }}>
+                                                <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold border-2 border-transparent bg-white ring-1 ring-slate-200 peer-checked:ring-2 peer-checked:ring-amber-500 peer-checked:bg-amber-50 peer-checked:text-amber-700 transition-all">
+                                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                                    </svg>
+                                                    Rusak Ringan
+                                                </span>
+                                            </label>
+                                            <label class="relative cursor-pointer">
+                                                <input type="radio" name="kondisi_alat[{{ $detail->alat_id }}]" value="rusak" class="peer sr-only">
+                                                <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold border-2 border-transparent bg-white ring-1 ring-slate-200 peer-checked:ring-2 peer-checked:ring-rose-500 peer-checked:bg-rose-50 peer-checked:text-rose-700 transition-all">
+                                                    <svg class="w-3.5 h-3.5 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                    </svg>
+                                                    Rusak
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        
+                        <!-- Custom Denda -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Nominal Denda Custom</label>
+                            <div class="relative">
+                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">Rp</span>
+                                <input type="number" name="custom_denda" min="0" step="1000" 
+                                       placeholder="{{ $estimatedDenda > 0 ? number_format($estimatedDenda, 0, '', '') : '0' }}"
+                                       class="w-full pl-10 pr-4 py-3 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 placeholder-slate-400">
+                            </div>
+                            <p class="mt-1.5 text-xs text-slate-400">
+                                Kosongkan untuk menggunakan denda otomatis
+                                @if($estimatedDenda > 0)
+                                    (Rp {{ number_format($estimatedDenda, 0, ',', '.') }})
+                                @else
+                                    (Rp 0 - tidak terlambat)
+                                @endif
+                            </p>
+                        </div>
+                        
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Catatan Kondisi Alat</label>
-                            <textarea name="catatan_kondisi" rows="4" 
+                            <textarea name="catatan_kondisi" rows="3" 
                                       placeholder="Tuliskan kondisi alat saat dikembalikan (opsional)"
                                       class="w-full px-4 py-3 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 placeholder-slate-400 resize-none"></textarea>
                             <p class="mt-1.5 text-xs text-slate-400">Catat jika ada kerusakan atau perubahan kondisi alat</p>

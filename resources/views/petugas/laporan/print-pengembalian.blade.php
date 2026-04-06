@@ -258,10 +258,10 @@
         <div class="signature-area">
             <div class="signature-box">
                 <p style="font-size: 10px; color: #64748b;">{{ now()->translatedFormat('d F Y') }}</p>
-                <p style="font-size: 10px; margin-top: 5px;">Administrator,</p>
+                <p style="font-size: 10px; margin-top: 5px;">Petugas,</p>
                 <div class="signature-line"></div>
                 <p class="signature-name">{{ Auth::user()->name }}</p>
-                <p class="signature-title">Admin Sistem</p>
+                <p class="signature-title">Petugas Peminjaman</p>
             </div>
         </div>
     </div>

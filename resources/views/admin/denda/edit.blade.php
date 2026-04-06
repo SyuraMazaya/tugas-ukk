@@ -30,7 +30,7 @@
         </div>
     </div>
     
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
         <!-- Form -->
         <div class="bg-white rounded-xl shadow-sm ring-1 ring-slate-200 overflow-hidden">
             <div class="flex items-center px-6 py-4 border-b border-slate-100">

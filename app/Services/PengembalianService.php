@@ -66,22 +66,33 @@ class PengembalianService
         Peminjaman $peminjaman,
         User $petugas,
         Carbon $tanggalKembali,
-        ?string $catatanKondisi = null
+        ?string $catatanKondisi = null,
+        ?float $customDenda = null,
+        ?array $kondisiAlat = null
     ): Pengembalian {
         if (!$peminjaman->canBeReturned()) {
             throw new \Exception('Peminjaman tidak dapat dikembalikan. Status saat ini: ' . $peminjaman->status_label);
         }
 
-        return DB::transaction(function () use ($peminjaman, $petugas, $tanggalKembali, $catatanKondisi) {
-            // Calculate fine
-            $denda = $this->hitungDenda(
-                $peminjaman->tanggal_kembali_rencana,
-                $tanggalKembali
-            );
+        return DB::transaction(function () use ($peminjaman, $petugas, $tanggalKembali, $catatanKondisi, $customDenda, $kondisiAlat) {
+            // Use custom denda if provided, otherwise calculate
+            if ($customDenda !== null) {
+                $denda = $customDenda;
+            } else {
+                $denda = $this->hitungDenda(
+                    $peminjaman->tanggal_kembali_rencana,
+                    $tanggalKembali
+                );
+            }
 
-            // Return stock for each item
+            // Return stock for each item and update kondisi if specified
             foreach ($peminjaman->detailPeminjaman as $detail) {
                 $this->alatService->tambahStok($detail->alat_id, $detail->jumlah);
+                
+                // Update kondisi alat if specified
+                if ($kondisiAlat && isset($kondisiAlat[$detail->alat_id])) {
+                    $this->alatService->updateKondisi($detail->alat_id, $kondisiAlat[$detail->alat_id]);
+                }
             }
 
             // Create pengembalian record

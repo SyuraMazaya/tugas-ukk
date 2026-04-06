@@ -16,7 +16,7 @@
         <p class="mt-1 text-slate-500">Buat kategori alat baru</p>
     </div>
     
-    <x-card class="max-w-2xl">
+    <x-card class="max-w-2xl mx-auto">
         <form method="POST" action="{{ route('admin.kategori.store') }}">
             @csrf
             

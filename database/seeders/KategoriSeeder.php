@@ -15,24 +15,28 @@ class KategoriSeeder extends Seeder
     {
         $kategoris = [
             [
-                'nama_kategori' => 'Elektronik',
-                'deskripsi' => 'Alat-alat elektronik seperti multimeter, solder, osiloskop, dll.',
+                'nama_kategori' => 'Laptop & Komputer',
+                'deskripsi' => 'Perangkat komputer portable dan stasioner untuk keperluan praktikum dan pembelajaran.',
             ],
             [
-                'nama_kategori' => 'Mekanik',
-                'deskripsi' => 'Alat-alat mekanik seperti kunci pas, obeng set, tang, mesin bor, dll.',
+                'nama_kategori' => 'Perangkat Jaringan',
+                'deskripsi' => 'Peralatan networking seperti router, switch, access point, modem, dan perangkat jaringan lainnya.',
             ],
             [
-                'nama_kategori' => 'Komputer',
-                'deskripsi' => 'Perangkat komputer seperti laptop, keyboard, monitor, dll.',
+                'nama_kategori' => 'Kabel & Konektor',
+                'deskripsi' => 'Kabel jaringan, kabel power, connector RJ45, dan perlengkapan kabel lainnya.',
             ],
             [
-                'nama_kategori' => 'Multimedia',
-                'deskripsi' => 'Peralatan multimedia seperti kamera, tripod, lighting, microphone, dll.',
+                'nama_kategori' => 'Server & Storage',
+                'deskripsi' => 'Perangkat server, NAS, hard drive eksternal, dan media penyimpanan data.',
             ],
             [
-                'nama_kategori' => 'Laboratorium',
-                'deskripsi' => 'Peralatan laboratorium seperti mikroskop, beaker, tabung reaksi, dll.',
+                'nama_kategori' => 'Buku & Referensi',
+                'deskripsi' => 'Buku panduan, modul pembelajaran, referensi pemrograman, networking, dan sistem operasi.',
+            ],
+            [
+                'nama_kategori' => 'Peripheral & Aksesoris',
+                'deskripsi' => 'Mouse, keyboard, monitor, printer, scanner, dan perangkat peripheral lainnya.',
             ],
         ];
 

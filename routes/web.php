@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DendaController;
 use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
 use App\Http\Controllers\Petugas\PeminjamanController as PetugasPeminjamanController;
 use App\Http\Controllers\Petugas\PengembalianController;
+use App\Http\Controllers\Petugas\LaporanController as PetugasLaporanController;
 use App\Http\Controllers\Peminjam\DashboardController as PeminjamDashboardController;
 use App\Http\Controllers\Peminjam\PeminjamanController as PeminjamPeminjamanController;
 use Illuminate\Support\Facades\Route;
@@ -102,6 +103,13 @@ Route::prefix('petugas')
         Route::get('/pengembalian/create/{peminjaman}', [PengembalianController::class, 'create'])->name('pengembalian.create');
         Route::post('/pengembalian/{peminjaman}', [PengembalianController::class, 'store'])->name('pengembalian.store');
         Route::get('/pengembalian/{id}', [PengembalianController::class, 'show'])->name('pengembalian.show');
+
+        // Laporan
+        Route::get('/laporan', [PetugasLaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/peminjaman', [PetugasLaporanController::class, 'peminjaman'])->name('laporan.peminjaman');
+        Route::get('/laporan/pengembalian', [PetugasLaporanController::class, 'pengembalian'])->name('laporan.pengembalian');
+        Route::get('/laporan/peminjaman/print', [PetugasLaporanController::class, 'printPeminjaman'])->name('laporan.peminjaman.print');
+        Route::get('/laporan/pengembalian/print', [PetugasLaporanController::class, 'printPengembalian'])->name('laporan.pengembalian.print');
     });
 
 /*

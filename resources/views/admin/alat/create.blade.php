@@ -16,7 +16,7 @@
         <p class="mt-1 text-slate-500">Tambahkan alat produktif baru ke sistem</p>
     </div>
     
-    <x-card class="max-w-2xl">
+    <x-card class="max-w-2xl mx-auto">
         <form method="POST" action="{{ route('admin.alat.store') }}" enctype="multipart/form-data">
             @csrf
             

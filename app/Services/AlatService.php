@@ -197,4 +197,25 @@ class AlatService
         $alat = Alat::find($alatId);
         $alat->increment('stok', $jumlah);
     }
+
+    /**
+     * Update kondisi alat.
+     */
+    public function updateKondisi(int $alatId, string $kondisi): void
+    {
+        $alat = Alat::find($alatId);
+        if ($alat && in_array($kondisi, ['baik', 'rusak_ringan', 'rusak'])) {
+            $oldKondisi = $alat->kondisi;
+            $alat->update(['kondisi' => $kondisi]);
+            
+            if ($oldKondisi !== $kondisi) {
+                $this->logService->log('Mengubah kondisi alat', [
+                    'alat_id' => $alat->id_alat,
+                    'nama_alat' => $alat->nama_alat,
+                    'kondisi_lama' => $oldKondisi,
+                    'kondisi_baru' => $kondisi,
+                ]);
+            }
+        }
+    }
 }

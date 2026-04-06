@@ -62,11 +62,19 @@ class PengembalianController extends Controller
         try {
             $tanggalKembali = Carbon::parse($request->tanggal_kembali_real);
             
+            // Get custom denda (convert empty string to null)
+            $customDenda = $request->filled('custom_denda') ? (float) $request->custom_denda : null;
+            
+            // Get kondisi alat array
+            $kondisiAlat = $request->kondisi_alat;
+            
             $this->pengembalianService->proses(
                 $peminjaman,
                 Auth::user(),
                 $tanggalKembali,
-                $request->catatan_kondisi
+                $request->catatan_kondisi,
+                $customDenda,
+                $kondisiAlat
             );
 
             return redirect()
