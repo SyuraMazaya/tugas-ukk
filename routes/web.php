@@ -1,19 +1,19 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\AlatController;
-use App\Http\Controllers\Admin\LogAktivitasController;
-use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\DendaController;
-use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
-use App\Http\Controllers\Petugas\PeminjamanController as PetugasPeminjamanController;
-use App\Http\Controllers\Petugas\PengembalianController;
-use App\Http\Controllers\Petugas\LaporanController as PetugasLaporanController;
+use App\Http\Controllers\Admin\KategoriController;
+use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Admin\LogAktivitasController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Peminjam\DashboardController as PeminjamDashboardController;
 use App\Http\Controllers\Peminjam\PeminjamanController as PeminjamPeminjamanController;
+use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
+use App\Http\Controllers\Petugas\LaporanController as PetugasLaporanController;
+use App\Http\Controllers\Petugas\PeminjamanController as PetugasPeminjamanController;
+use App\Http\Controllers\Petugas\PengembalianController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,9 +24,10 @@ use Illuminate\Support\Facades\Route;
 
 // Redirect root based on authentication status
 Route::get('/', function () {
-    if (auth()->user()) {
+    $user = auth()->guard()->user();
+
+    if ($user !== null) {
         // Redirect authenticated users to their dashboard
-        $user = auth()->user();
         if ($user->isAdmin()) {
             return redirect()->route('admin.dashboard');
         } elseif ($user->isPetugas()) {
@@ -35,6 +36,7 @@ Route::get('/', function () {
             return redirect()->route('peminjam.dashboard');
         }
     }
+
     // Redirect unauthenticated users to login
     return redirect()->route('login');
 });
@@ -57,22 +59,22 @@ Route::prefix('admin')
     ->middleware(['auth', 'role:admin'])
     ->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-        
+
         // User Management
         Route::resource('users', UserController::class);
-        
+
         // Kategori Management
         Route::resource('kategori', KategoriController::class)->except(['show']);
-        
+
         // Alat Management
         Route::resource('alat', AlatController::class);
-        
+
         // Denda Management
         Route::resource('denda', DendaController::class)->except(['show']);
-        
+
         // Log Aktivitas
         Route::get('/log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
-        
+
         // Laporan
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
         Route::get('/laporan/peminjaman', [LaporanController::class, 'peminjaman'])->name('laporan.peminjaman');
@@ -91,13 +93,13 @@ Route::prefix('petugas')
     ->middleware(['auth', 'role:petugas'])
     ->group(function () {
         Route::get('/dashboard', [PetugasDashboardController::class, 'index'])->name('dashboard');
-        
+
         // Peminjaman Management
         Route::get('/peminjaman', [PetugasPeminjamanController::class, 'index'])->name('peminjaman.index');
         Route::get('/peminjaman/{id}', [PetugasPeminjamanController::class, 'show'])->name('peminjaman.show');
         Route::post('/peminjaman/{id}/approve', [PetugasPeminjamanController::class, 'approve'])->name('peminjaman.approve');
         Route::post('/peminjaman/{id}/reject', [PetugasPeminjamanController::class, 'reject'])->name('peminjaman.reject');
-        
+
         // Pengembalian Management
         Route::get('/pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
         Route::get('/pengembalian/create/{peminjaman}', [PengembalianController::class, 'create'])->name('pengembalian.create');
@@ -123,7 +125,7 @@ Route::prefix('peminjam')
     ->group(function () {
         Route::get('/dashboard', [PeminjamDashboardController::class, 'index'])->name('dashboard');
         Route::get('/katalog', [PeminjamDashboardController::class, 'katalog'])->name('katalog');
-        
+
         // Peminjaman
         Route::get('/peminjaman', [PeminjamPeminjamanController::class, 'index'])->name('peminjaman.index');
         Route::get('/peminjaman/create', [PeminjamPeminjamanController::class, 'create'])->name('peminjaman.create');
