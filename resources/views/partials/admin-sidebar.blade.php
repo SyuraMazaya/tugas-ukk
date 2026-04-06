@@ -6,39 +6,33 @@
     $dendaIcon = '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
     $logIcon = '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>';
     $laporanIcon = '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>';
+    $sectionIcon = '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/></svg>';
 
 @endphp
 
 <!-- User Profile Card -->
-<div class="mx-2 mb-4 p-2.5 bg-gradient-to-br from-slate-700/50 to-slate-800/50 rounded-lg border border-slate-600/30 backdrop-blur-sm">
-    <div class="flex items-center gap-2">
+<div class="mx-2 mb-6 p-3 bg-gradient-to-br from-slate-700/60 to-slate-800/70 rounded-xl border border-slate-600/40 backdrop-blur-sm hover:border-slate-600/60 transition-all duration-300 shadow-lg">
+    <div class="flex items-center gap-3">
         <div class="flex-shrink-0">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm ring-2 ring-indigo-400/50 shadow-md">
+            <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm ring-2 ring-indigo-400/60 shadow-lg">
                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
             </div>
         </div>
         <div class="flex-1 min-w-0">
-            <p class="text-xs font-semibold text-white truncate">{{ Auth::user()->name }}</p>
-            <p class="text-xs text-indigo-300 font-medium leading-tight">{{ ucfirst(Auth::user()->role->name) }}</p>
+            <p class="text-xs font-bold text-white truncate leading-tight">{{ Auth::user()->name }}</p>
+            <p class="text-xs text-indigo-200 font-medium leading-tight mt-0.5">{{ ucfirst(Auth::user()->role->name) }}</p>
         </div>
         <div class="flex-shrink-0">
-            <span class="inline-flex items-center px-1.5 py-0.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium ring-1 ring-green-500/30 whitespace-nowrap">
-                <span class="w-1 h-1 bg-green-400 rounded-full mr-1 animate-pulse"></span>
+            <span class="inline-flex items-center px-2 py-1 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-semibold ring-1 ring-emerald-500/40 whitespace-nowrap">
+                <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mr-1.5 animate-pulse"></span>
                 Aktif
             </span>
         </div>
     </div>
 </div>
 
-<!-- Admin Menu Section -->
-<div class="mb-6">
-    <div class="flex items-center gap-2 px-3 mb-2.5">
-        <div class="flex-1">
-            <p class="text-xs font-bold text-slate-300 uppercase tracking-wide leading-none">Menu Utama</p>
-        </div>
-        <div class="w-1 h-1 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500"></div>
-    </div>
-    
+<!-- Main Menu Section -->
+<x-sidebar-section title="Menu Utama" :icon="$sectionIcon" :expanded="true">
     <x-nav-link href="{{ route('admin.dashboard') }}" :active="request()->routeIs('admin.dashboard')" :icon="$menuIcon">
         Dashboard
     </x-nav-link>
@@ -58,17 +52,10 @@
     <x-nav-link href="{{ route('admin.denda.index') }}" :active="request()->routeIs('admin.denda.*')" :icon="$dendaIcon">
         Pengaturan Denda
     </x-nav-link>
-</div>
+</x-sidebar-section>
 
 <!-- Reports Section -->
-<div class="mb-6">
-    <div class="flex items-center gap-2 px-3 mb-2.5">
-        <div class="flex-1">
-            <p class="text-xs font-bold text-slate-300 uppercase tracking-wide leading-none">Laporan & Log</p>
-        </div>
-        <div class="w-1 h-1 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500"></div>
-    </div>
-    
+<x-sidebar-section title="Laporan & Log" :icon="$sectionIcon" :expanded="true">
     <x-nav-link href="{{ route('admin.log-aktivitas.index') }}" :active="request()->routeIs('admin.log-aktivitas.*')" :icon="$logIcon">
         Log Aktivitas
     </x-nav-link>
@@ -76,7 +63,7 @@
     <x-nav-link href="{{ route('admin.laporan.index') }}" :active="request()->routeIs('admin.laporan.*')" :icon="$laporanIcon">
         Laporan
     </x-nav-link>
-</div>
+</x-sidebar-section>
 
 
 

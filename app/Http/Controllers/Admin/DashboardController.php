@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\LogAktivitas;
 use App\Services\AlatService;
 use App\Services\PeminjamanService;
 use App\Services\UserService;
@@ -22,7 +23,11 @@ class DashboardController extends Controller
     public function index(): View
     {
         $statistics = $this->peminjamanService->getStatistics();
+        $recentLogs = LogAktivitas::with('user')
+            ->latest()
+            ->limit(5)
+            ->get();
         
-        return view('admin.dashboard', compact('statistics'));
+        return view('admin.dashboard', compact('statistics', 'recentLogs'));
     }
 }

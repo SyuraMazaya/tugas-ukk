@@ -3,23 +3,25 @@
     $peminjamanIcon = '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>';
     $pengembalianIcon = '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>';
     $laporanIcon = '<svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>';
+    $sectionIcon = '<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/></svg>';
+
 @endphp
 
 <!-- User Profile Card -->
-<div class="mx-2 mb-4 p-2.5 bg-gradient-to-br from-slate-700/50 to-slate-800/50 rounded-lg border border-slate-600/30 backdrop-blur-sm">
-    <div class="flex items-center gap-2">
+<div class="mx-2 mb-6 p-3 bg-gradient-to-br from-slate-700/60 to-slate-800/70 rounded-xl border border-slate-600/40 backdrop-blur-sm hover:border-slate-600/60 transition-all duration-300 shadow-lg">
+    <div class="flex items-center gap-3">
         <div class="flex-shrink-0">
-            <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm ring-2 ring-indigo-400/50 shadow-md">
+            <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm ring-2 ring-indigo-400/60 shadow-lg">
                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
             </div>
         </div>
         <div class="flex-1 min-w-0">
-            <p class="text-xs font-semibold text-white truncate">{{ Auth::user()->name }}</p>
-            <p class="text-xs text-indigo-300 font-medium leading-tight">{{ ucfirst(Auth::user()->role->name) }}</p>
+            <p class="text-xs font-bold text-white truncate leading-tight">{{ Auth::user()->name }}</p>
+            <p class="text-xs text-indigo-200 font-medium leading-tight mt-0.5">{{ ucfirst(Auth::user()->role->name) }}</p>
         </div>
         <div class="flex-shrink-0">
-            <span class="inline-flex items-center px-1.5 py-0.5 rounded-md bg-green-500/20 text-green-400 text-xs font-medium ring-1 ring-green-500/30 whitespace-nowrap">
-                <span class="w-1 h-1 bg-green-400 rounded-full mr-1 animate-pulse"></span>
+            <span class="inline-flex items-center px-2 py-1 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-semibold ring-1 ring-emerald-500/40 whitespace-nowrap">
+                <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mr-1.5 animate-pulse"></span>
                 Aktif
             </span>
         </div>
@@ -27,14 +29,7 @@
 </div>
 
 <!-- Main Menu Section -->
-<div class="mb-6">
-    <div class="flex items-center gap-2 px-3 mb-2.5">
-        <div class="flex-1">
-            <p class="text-xs font-bold text-slate-300 uppercase tracking-wide leading-none">Menu Petugas</p>
-        </div>
-        <div class="w-1 h-1 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500"></div>
-    </div>
-    
+<x-sidebar-section title="Menu Petugas" :icon="$sectionIcon" :expanded="true">
     <x-nav-link href="{{ route('petugas.dashboard') }}" :active="request()->routeIs('petugas.dashboard')" :icon="$menuIcon">
         Dashboard
     </x-nav-link>
@@ -46,34 +41,11 @@
     <x-nav-link href="{{ route('petugas.pengembalian.index') }}" :active="request()->routeIs('petugas.pengembalian.*')" :icon="$pengembalianIcon">
         Kelola Pengembalian
     </x-nav-link>
-</div>
+</x-sidebar-section>
 
 <!-- Reports Section -->
-<div class="mb-6">
-    <div class="flex items-center gap-2 px-3 mb-2.5">
-        <div class="flex-1">
-            <p class="text-xs font-bold text-slate-300 uppercase tracking-wide leading-none">Laporan</p>
-        </div>
-        <div class="w-1 h-1 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500"></div>
-    </div>
-    
+<x-sidebar-section title="Laporan" :icon="$sectionIcon" :expanded="true">
     <x-nav-link href="{{ route('petugas.laporan.index') }}" :active="request()->routeIs('petugas.laporan.*')" :icon="$laporanIcon">
         Lihat Laporan
     </x-nav-link>
-</div>
-
-<!-- Footer Branding -->
-<div class="mt-auto pt-3 pb-2">
-    <div class="mx-2 px-3 py-2 bg-slate-700/30 rounded-lg border border-slate-600/20">
-        <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-400 text-xs">SIJAMAT-PRO v1.0</span>
-            <span class="text-slate-500 text-xs">© 2026</span>
-        </div>
-        <div class="mt-1.5 flex items-center gap-1 text-slate-500">
-            <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
-            <span class="text-xs leading-none">Sistem Normal</span>
-        </div>
-    </div>
-</div>
+</x-sidebar-section>
