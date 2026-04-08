@@ -21,11 +21,12 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $roleId = $request->get('role_id');
+        $roleId = $request->filled('role_id') ? $request->integer('role_id') : null;
         $users = $this->userService->getAll($roleId);
-        $roles = $this->userService->getRoles();
+        $roleStats = $this->userService->getRolesWithUserCount();
+        $totalUsers = (int) $roleStats->sum('users_count');
 
-        return view('admin.users.index', compact('users', 'roles', 'roleId'));
+        return view('admin.users.index', compact('users', 'roleStats', 'totalUsers', 'roleId'));
     }
 
     /**
@@ -57,7 +58,7 @@ class UserController extends Controller
     {
         $user = $this->userService->findById($id);
 
-        if (!$user) {
+        if (! $user) {
             abort(404);
         }
 
@@ -71,7 +72,7 @@ class UserController extends Controller
     {
         $user = $this->userService->findById($id);
 
-        if (!$user) {
+        if (! $user) {
             abort(404);
         }
 
@@ -87,7 +88,7 @@ class UserController extends Controller
     {
         $user = $this->userService->findById($id);
 
-        if (!$user) {
+        if (! $user) {
             abort(404);
         }
 
@@ -105,12 +106,13 @@ class UserController extends Controller
     {
         $user = $this->userService->findById($id);
 
-        if (!$user) {
+        if (! $user) {
             abort(404);
         }
 
         try {
             $this->userService->delete($user);
+
             return redirect()
                 ->route('admin.users.index')
                 ->with('success', 'User berhasil dihapus.');

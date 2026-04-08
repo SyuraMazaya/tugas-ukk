@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Hash;
 
@@ -24,7 +25,18 @@ class UserService
             $query->where('role_id', $roleId);
         }
 
-        return $query->orderBy('name')->paginate($perPage);
+        return $query->orderBy('name')->paginate($perPage)->withQueryString();
+    }
+
+    /**
+     * Get all roles with total user count.
+     */
+    public function getRolesWithUserCount(): Collection
+    {
+        return Role::query()
+            ->withCount('users')
+            ->orderBy('id')
+            ->get();
     }
 
     /**
@@ -71,7 +83,7 @@ class UserService
         ];
 
         // Only update password if provided
-        if (!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $updateData['password'] = Hash::make($data['password']);
         }
 
