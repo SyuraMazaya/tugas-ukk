@@ -2,138 +2,212 @@
     <x-slot:sidebar>
         @include('partials.admin-sidebar')
     </x-slot:sidebar>
-    
-    <!-- Page Header -->
-    <div class="mb-8">
-        <nav class="flex items-center text-sm text-slate-500 mb-4">
-            <a href="{{ route('admin.dashboard') }}" class="hover:text-indigo-600 transition-colors">Dashboard</a>
-            <svg class="w-4 h-4 mx-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+
+    <!-- Header -->
+    <div class="mb-6 rounded-2xl border border-cyan-200/50 bg-gradient-to-r from-cyan-500 via-teal-500 to-emerald-500 p-6 shadow-lg">
+        <nav class="flex items-center text-sm text-white/85">
+            <a href="{{ route('admin.denda.index') }}" class="font-medium transition-colors hover:text-white">Pengaturan Denda</a>
+            <svg class="mx-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
-            <a href="{{ route('admin.denda.index') }}" class="hover:text-indigo-600 transition-colors">Denda</a>
-            <svg class="w-4 h-4 mx-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-            <span class="text-slate-700 font-medium">Edit</span>
+            <span class="font-semibold text-white">Edit Denda</span>
         </nav>
-        <div class="flex items-center justify-between">
+
+        <div class="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800">Edit Denda</h1>
-                <p class="mt-1 text-slate-500">Ubah konfigurasi denda</p>
+                <h1 class="text-2xl font-bold text-white sm:text-3xl">Edit Konfigurasi Denda</h1>
+                <p class="mt-1 text-sm text-white/90 sm:text-base">Perbarui aturan denda untuk menjaga konsistensi kebijakan.</p>
             </div>
-            <a href="{{ route('admin.denda.index') }}" class="inline-flex items-center px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
-                <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            <div class="inline-flex items-center gap-2 rounded-xl border border-white/25 bg-white/15 px-4 py-2 text-white backdrop-blur-sm">
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5" />
                 </svg>
-                Kembali
-            </a>
+                <span class="text-sm font-semibold">Mode Edit</span>
+            </div>
         </div>
     </div>
-    
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-6xl mx-auto">
-        <!-- Form -->
-        <div class="bg-white rounded-xl shadow-sm ring-1 ring-slate-200 overflow-hidden">
-            <div class="flex items-center px-6 py-4 border-b border-slate-100">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white">
-                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                    </svg>
-                </div>
-                <h3 class="ml-3 text-lg font-semibold text-slate-800">Form Denda</h3>
-            </div>
-            
-            <form action="{{ route('admin.denda.update', $denda) }}" method="POST" class="p-6 space-y-6">
+
+    <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <x-card class="border border-cyan-100/80 shadow-md xl:col-span-2">
+            <form action="{{ route('admin.denda.update', $denda) }}" method="POST" id="edit-denda-form" class="space-y-6">
                 @csrf
                 @method('PUT')
-                
-                <!-- Nama Denda -->
+
+                <div class="rounded-xl border border-cyan-100 bg-gradient-to-r from-cyan-50 to-teal-50 px-4 py-3">
+                    <p class="text-sm font-semibold text-cyan-800">Detail Denda</p>
+                    <p class="mt-0.5 text-xs text-cyan-600">Perbarui nilai dan status denda dengan hati-hati karena berdampak ke perhitungan pengembalian.</p>
+                </div>
+
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Nama Denda <span class="text-rose-500">*</span></label>
-                    <input type="text" name="nama_denda" value="{{ old('nama_denda', $denda->nama_denda) }}" required
-                           class="w-full px-4 py-3 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 @error('nama_denda') border-rose-500 @enderror"
-                           placeholder="Contoh: Denda Keterlambatan Pengembalian">
+                    <label class="mb-2 block text-sm font-semibold text-slate-700">Nama Denda <span class="text-rose-500">*</span></label>
+                    <input
+                        type="text"
+                        name="nama_denda"
+                        id="nama_denda"
+                        value="{{ old('nama_denda', $denda->nama_denda) }}"
+                        required
+                        placeholder="Contoh: Denda Keterlambatan Pengembalian"
+                        class="w-full rounded-lg border @error('nama_denda') border-rose-500 @else border-slate-200 @enderror px-4 py-3 text-slate-700 shadow-sm transition-colors focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
+                    />
                     @error('nama_denda')
-                        <p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>
+                        <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
                     @enderror
                 </div>
-                
-                <!-- Jumlah Denda -->
+
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Jumlah Denda per Hari (Rp) <span class="text-rose-500">*</span></label>
+                    <label class="mb-2 block text-sm font-semibold text-slate-700">Jumlah Denda per Hari (Rp) <span class="text-rose-500">*</span></label>
                     <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500">Rp</span>
-                        <input type="number" name="jumlah_denda" value="{{ old('jumlah_denda', $denda->jumlah_denda) }}" min="0" step="0.01" required
-                               class="w-full pl-10 pr-4 py-3 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 @error('jumlah_denda') border-rose-500 @enderror"
-                               placeholder="0">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-semibold text-slate-500">Rp</span>
+                        <input
+                            type="number"
+                            name="jumlah_denda"
+                            id="jumlah_denda"
+                            value="{{ old('jumlah_denda', $denda->jumlah_denda) }}"
+                            min="0"
+                            step="0.01"
+                            required
+                            placeholder="0"
+                            class="w-full rounded-lg border @error('jumlah_denda') border-rose-500 @else border-slate-200 @enderror py-3 pl-12 pr-4 text-slate-700 shadow-sm transition-colors focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
+                        />
                     </div>
                     @error('jumlah_denda')
-                        <p class="mt-1.5 text-xs text-rose-600">{{ $message }}</p>
+                        <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
                     @enderror
-                    <p class="mt-2 text-xs text-slate-500">Denda yang dikenakan untuk setiap hari keterlambatan</p>
+                    <p class="mt-2 text-xs text-slate-500">Nilai ini dikenakan untuk setiap hari keterlambatan.</p>
                 </div>
-                
-                <!-- Deskripsi -->
+
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-2">Deskripsi</label>
-                    <textarea name="deskripsi" rows="3" 
-                              class="w-full px-4 py-3 text-sm text-slate-700 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 placeholder-slate-400 resize-none"
-                              placeholder="Tuliskan deskripsi denda (opsional)">{{ old('deskripsi', $denda->deskripsi) }}</textarea>
+                    <label class="mb-2 block text-sm font-semibold text-slate-700">Deskripsi</label>
+                    <textarea
+                        name="deskripsi"
+                        id="deskripsi"
+                        rows="4"
+                        placeholder="Tuliskan deskripsi singkat denda (opsional)"
+                        class="w-full rounded-lg border @error('deskripsi') border-rose-500 @else border-slate-200 @enderror px-4 py-3 text-slate-700 shadow-sm transition-colors placeholder:text-slate-400 focus:border-cyan-500 focus:outline-none focus:ring-2 focus:ring-cyan-500/20"
+                    >{{ old('deskripsi', $denda->deskripsi) }}</textarea>
+                    <div class="mt-2 flex items-center justify-between">
+                        <p class="text-xs text-slate-500">Deskripsi membantu tim memahami alasan konfigurasi.</p>
+                        <p id="char-count" class="text-xs font-medium text-slate-500">0 karakter</p>
+                    </div>
+                    @error('deskripsi')
+                        <p class="mt-2 text-sm text-rose-600">{{ $message }}</p>
+                    @enderror
                 </div>
-                
-                <!-- Status -->
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 uppercase tracking-wider mb-3">Status</label>
-                    <label class="flex items-center cursor-pointer">
-                        <input type="checkbox" name="is_active" value="1" {{ old('is_active', $denda->is_active) ? 'checked' : '' }} class="w-4 h-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
-                        <span class="ml-2 text-sm text-slate-700">Aktif</span>
+
+                <div class="rounded-xl border border-slate-200 bg-slate-50/80 p-4">
+                    <label class="mb-2 block text-sm font-semibold text-slate-700">Status Denda</label>
+                    <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+                        <input
+                            type="checkbox"
+                            name="is_active"
+                            id="is_active"
+                            value="1"
+                            {{ old('is_active', $denda->is_active) ? 'checked' : '' }}
+                            class="h-4 w-4 rounded border-slate-300 text-cyan-600 focus:ring-cyan-500"
+                        >
+                        Aktif
                     </label>
-                    <p class="mt-1.5 text-xs text-slate-500">Denda aktif akan digunakan dalam perhitungan pengembalian</p>
+                    <p class="mt-1.5 text-xs text-slate-500">Status aktif menentukan apakah denda ini dipakai saat pengembalian.</p>
                 </div>
-                
-                <!-- Actions -->
-                <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
-                    <a href="{{ route('admin.denda.index') }}" class="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-slate-600 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors">
+
+                <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-6">
+                    <a href="{{ route('admin.denda.index') }}" class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-50">
                         Batal
                     </a>
-                    <button type="submit" class="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors">
-                        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    <button type="submit" id="submit-btn" class="inline-flex items-center rounded-lg bg-gradient-to-r from-cyan-600 to-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-all hover:from-cyan-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
+                        <svg class="mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
-                        Simpan Perubahan
+                        <span id="submit-text">Simpan Perubahan</span>
                     </button>
                 </div>
             </form>
-        </div>
-        
-        <!-- Info Box -->
-        <div class="space-y-6">
-            <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-6">
-                <div class="flex items-start">
-                    <svg class="w-6 h-6 text-emerald-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m7 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <div class="ml-4">
-                        <h4 class="text-sm font-semibold text-emerald-900">Data Saat Ini</h4>
-                        <div class="mt-2 text-sm text-emerald-800 space-y-1">
-                            <p><strong>Nama:</strong> {{ $denda->nama_denda }}</p>
-                            <p><strong>Jumlah:</strong> Rp {{ number_format($denda->jumlah_denda, 0, ',', '.') }}/hari</p>
-                            <p><strong>Status:</strong> {{ $denda->is_active ? 'Aktif' : 'Nonaktif' }}</p>
-                        </div>
+        </x-card>
+
+        <div class="space-y-5">
+            <x-card class="border border-emerald-100 bg-gradient-to-br from-emerald-50 via-teal-50 to-white shadow-sm">
+                <h3 class="text-sm font-bold text-emerald-900">Data Saat Ini</h3>
+                <div class="mt-3 space-y-2">
+                    <div class="flex items-center justify-between rounded-lg border border-white bg-white/85 px-3 py-2">
+                        <span class="text-sm text-slate-600">Nama</span>
+                        <span class="text-sm font-semibold text-slate-800">{{ $denda->nama_denda }}</span>
+                    </div>
+                    <div class="flex items-center justify-between rounded-lg border border-white bg-white/85 px-3 py-2">
+                        <span class="text-sm text-slate-600">Nominal</span>
+                        <span class="text-sm font-semibold text-slate-800">Rp {{ number_format($denda->jumlah_denda, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="flex items-center justify-between rounded-lg border border-white bg-white/85 px-3 py-2">
+                        <span class="text-sm text-slate-600">Status</span>
+                        <span class="text-sm font-semibold text-slate-800">{{ $denda->is_active ? 'Aktif' : 'Nonaktif' }}</span>
                     </div>
                 </div>
-            </div>
-            
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-6">
-                <div class="flex items-start">
-                    <svg class="w-6 h-6 text-blue-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <div class="ml-4">
-                        <h4 class="text-sm font-semibold text-blue-900">Tentang Denda</h4>
-                        <p class="mt-1 text-sm text-blue-800">Denda adalah biaya yang dikenakan ketika peminjam terlambat mengembalikan barang.</p>
-                    </div>
+            </x-card>
+
+            <x-card class="border border-cyan-100 bg-gradient-to-br from-cyan-50 via-sky-50 to-white shadow-sm">
+                <h3 class="text-sm font-bold text-cyan-900">Preview Perubahan</h3>
+                <div class="mt-3 space-y-2 rounded-lg border border-white/70 bg-white/80 p-3">
+                    <p class="text-xs uppercase tracking-wider text-slate-500">Nama Denda</p>
+                    <p id="preview-name" class="text-sm font-semibold text-slate-800">{{ old('nama_denda', $denda->nama_denda) }}</p>
+
+                    <p class="pt-2 text-xs uppercase tracking-wider text-slate-500">Nominal</p>
+                    <p id="preview-amount" class="text-sm font-semibold text-slate-800">Rp {{ number_format((float) old('jumlah_denda', $denda->jumlah_denda), 0, ',', '.') }} / hari</p>
+
+                    <p class="pt-2 text-xs uppercase tracking-wider text-slate-500">Status</p>
+                    <p id="preview-status" class="text-sm text-slate-700">{{ old('is_active', $denda->is_active) ? 'Aktif' : 'Nonaktif' }}</p>
+
+                    <p class="pt-2 text-xs uppercase tracking-wider text-slate-500">Deskripsi</p>
+                    <p id="preview-desc" class="text-sm text-slate-600">{{ old('deskripsi', $denda->deskripsi) ?: 'Belum ada deskripsi' }}</p>
                 </div>
-            </div>
+            </x-card>
         </div>
     </div>
+
+    <script>
+        const namaInput = document.getElementById('nama_denda');
+        const jumlahInput = document.getElementById('jumlah_denda');
+        const descInput = document.getElementById('deskripsi');
+        const statusInput = document.getElementById('is_active');
+
+        const previewName = document.getElementById('preview-name');
+        const previewAmount = document.getElementById('preview-amount');
+        const previewStatus = document.getElementById('preview-status');
+        const previewDesc = document.getElementById('preview-desc');
+        const charCount = document.getElementById('char-count');
+
+        function formatRupiah(value) {
+            const number = Number(value);
+
+            if (Number.isNaN(number) || number < 0) {
+                return 'Rp 0';
+            }
+
+            return `Rp ${new Intl.NumberFormat('id-ID').format(number)}`;
+        }
+
+        function updatePreview() {
+            const nameValue = (namaInput.value || '').trim();
+            const amountValue = jumlahInput.value || '0';
+            const descValue = (descInput.value || '').trim();
+
+            previewName.textContent = nameValue || 'Belum diisi';
+            previewAmount.textContent = `${formatRupiah(amountValue)} / hari`;
+            previewStatus.textContent = statusInput.checked ? 'Aktif' : 'Nonaktif';
+            previewDesc.textContent = descValue || 'Belum ada deskripsi';
+            charCount.textContent = `${descInput.value.length} karakter`;
+        }
+
+        [namaInput, jumlahInput, descInput, statusInput].forEach((element) => {
+            element.addEventListener('input', updatePreview);
+            element.addEventListener('change', updatePreview);
+        });
+
+        const form = document.getElementById('edit-denda-form');
+        form.addEventListener('submit', function() {
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            document.getElementById('submit-text').textContent = 'Menyimpan...';
+        });
+
+        updatePreview();
+    </script>
 </x-layouts.app>
