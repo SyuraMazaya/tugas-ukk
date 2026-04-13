@@ -6,18 +6,30 @@
 
 @php
     $classes = $active
-        ? 'relative flex items-center px-3 py-2.5 text-white bg-gradient-to-r from-indigo-500/20 to-indigo-500/10 hover:from-indigo-500/25 hover:to-indigo-500/15 rounded-lg font-medium transition-all duration-200 border-l-3 border-indigo-500 shadow-sm'
-        : 'relative flex items-center px-3 py-2.5 text-slate-300 hover:text-slate-100 hover:bg-slate-700/50 rounded-lg font-medium transition-all duration-200 border-l-3 border-transparent';
+        ? 'group relative mb-1.5 flex items-center gap-3 rounded-xl border border-blue-800 bg-blue-900 px-3 py-2.5 text-sm font-semibold text-white shadow-sm transition-all duration-200'
+        : 'group relative mb-1.5 flex items-center gap-3 rounded-xl border border-transparent px-3 py-2.5 text-sm font-medium text-blue-200 transition-all duration-200 hover:border-blue-800 hover:bg-blue-900 hover:text-white';
+
+    $iconClasses = $active
+        ? 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-blue-700 bg-blue-800 text-blue-100'
+        : 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-blue-900 bg-blue-900 text-blue-300 transition-colors duration-200 group-hover:border-blue-700 group-hover:bg-blue-800 group-hover:text-blue-100';
 @endphp
 
-<a href="{{ $href }}" {{ $attributes->merge(['class' => $classes . ' mb-1.5 group']) }}>
-    @if($icon)
-        <span class="mr-3 flex-shrink-0 p-1.5 rounded-lg {{ $active ? 'bg-indigo-500/40 text-indigo-100 shadow-md' : 'bg-slate-600/40 text-slate-400 group-hover:bg-slate-500/50 group-hover:text-slate-200' }} transition-all duration-200 flex items-center justify-center" style="width: 22px; height: 22px;">{!! $icon !!}</span>
-    @endif
-    <span class="truncate flex-1 text-sm font-medium">{{ $slot }}</span>
+<a href="{{ $href }}" {{ $attributes->merge(['class' => $classes]) }}>
     @if($active)
-        <span class="flex-shrink-0 visual-indicator">
-            <svg class="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        <span class="absolute bottom-2 left-0 top-2 w-1 rounded-r bg-blue-300" aria-hidden="true"></span>
+    @endif
+
+    @if($icon)
+        <span class="{{ $iconClasses }}">{!! $icon !!}</span>
+    @endif
+
+    <span class="truncate flex-1">{{ $slot }}</span>
+
+    @if($active)
+        <span class="shrink-0" aria-hidden="true">
+            <svg class="h-4 w-4 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
         </span>
     @endif
 </a>

@@ -11,21 +11,21 @@
 @endphp
 
 <!-- User Profile Card -->
-<div class="mx-2 mb-6 p-3 bg-gradient-to-br from-slate-700/60 to-slate-800/70 rounded-xl border border-slate-600/40 backdrop-blur-sm hover:border-slate-600/60 transition-all duration-300 shadow-lg">
+<div class="mx-2 mb-6 rounded-xl border border-blue-800 bg-blue-900 p-3 shadow-sm">
     <div class="flex items-center gap-3">
-        <div class="flex-shrink-0">
-            <div class="w-11 h-11 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm ring-2 ring-indigo-400/60 shadow-lg">
+        <div class="shrink-0">
+            <div class="flex h-11 w-11 items-center justify-center rounded-lg border border-blue-600 bg-blue-700 text-sm font-bold text-white">
                 {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
             </div>
         </div>
         <div class="flex-1 min-w-0">
-            <p class="text-xs font-bold text-white truncate leading-tight">{{ Auth::user()->name }}</p>
-            <p class="text-xs text-indigo-200 font-medium leading-tight mt-0.5">{{ ucfirst(Auth::user()->role->name) }}</p>
+            <p class="truncate text-xs font-bold leading-tight text-blue-100">{{ Auth::user()->name }}</p>
+            <p class="mt-0.5 text-xs font-medium leading-tight text-blue-300">{{ ucfirst(Auth::user()->role->name) }}</p>
         </div>
-        <div class="flex-shrink-0">
-            <span class="inline-flex items-center px-2 py-1 rounded-md bg-emerald-500/20 text-emerald-300 text-xs font-semibold ring-1 ring-emerald-500/40 whitespace-nowrap">
-                <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mr-1.5 animate-pulse"></span>
-                Aktif
+        <div class="shrink-0">
+            <span class="inline-flex items-center rounded-md border border-blue-700 bg-blue-800 px-2 py-1 text-xs font-semibold text-blue-100 whitespace-nowrap">
+                <span class="mr-1.5 h-1.5 w-1.5 rounded-full bg-blue-300"></span>
+                Online
             </span>
         </div>
     </div>
@@ -69,12 +69,12 @@
 
 <!-- Footer Branding -->
 <div class="mt-auto pt-3 pb-2">
-    <div class="mx-2 px-3 py-2 bg-slate-700/30 rounded-lg border border-slate-600/20">
+    <div class="mx-2 rounded-lg border border-blue-900 bg-blue-950 px-3 py-2">
         <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-400 text-xs">SIJAMAT-PRO v1.0</span>
-            <span class="text-slate-500 text-xs">© 2026</span>
+            <span class="text-xs text-blue-300">SIJAMAT-PRO v1.0</span>
+            <span class="text-xs text-blue-400">© 2026</span>
         </div>
-        <div class="mt-1.5 flex items-center gap-1 text-slate-500">
+        <div class="mt-1.5 flex items-center gap-1 text-blue-400">
             <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
             </svg>
