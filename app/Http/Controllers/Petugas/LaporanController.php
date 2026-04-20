@@ -40,11 +40,12 @@ class LaporanController extends Controller
     /**
      * Show pengembalian report.
      */
-    public function pengembalian(): View
+    public function pengembalian(Request $request): View
     {
-        $pengembalians = $this->pengembalianService->getAll(20);
+        $status = $request->get('status');
+        $pengembalians = $this->pengembalianService->getAll(20, $status);
 
-        return view('petugas.laporan.pengembalian', compact('pengembalians'));
+        return view('petugas.laporan.pengembalian', compact('pengembalians', 'status'));
     }
 
     /**
@@ -61,10 +62,11 @@ class LaporanController extends Controller
     /**
      * Print pengembalian report.
      */
-    public function printPengembalian(): View
+    public function printPengembalian(Request $request): View
     {
-        $pengembalians = $this->pengembalianService->getAll(100);
+        $status = $request->get('status');
+        $pengembalians = $this->pengembalianService->getAll(100, $status);
 
-        return view('petugas.laporan.print-pengembalian', compact('pengembalians'));
+        return view('petugas.laporan.print-pengembalian', compact('pengembalians', 'status'));
     }
 }

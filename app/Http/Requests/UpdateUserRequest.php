@@ -31,6 +31,14 @@ class UpdateUserRequest extends FormRequest
                 'max:255',
                 Rule::unique('users', 'username')->ignore($this->route('user')),
             ],
+            'email' => [
+                'nullable',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($this->route('user')),
+            ],
+            'nomor_telepon' => ['nullable', 'string', 'max:20'],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ];
     }
@@ -46,6 +54,8 @@ class UpdateUserRequest extends FormRequest
             'name.required' => 'Nama wajib diisi.',
             'username.required' => 'Username wajib diisi.',
             'username.unique' => 'Username sudah digunakan.',
+            'email.email' => 'Format email tidak valid.',
+            'email.unique' => 'Email sudah digunakan.',
             'password.min' => 'Password minimal 6 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
         ];

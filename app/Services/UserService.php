@@ -56,6 +56,8 @@ class UserService
             'role_id' => $data['role_id'],
             'name' => $data['name'],
             'username' => $data['username'],
+            'email' => $data['email'] ?? null,
+            'nomor_telepon' => $data['nomor_telepon'] ?? null,
             'password' => Hash::make($data['password']),
         ]);
 
@@ -80,6 +82,8 @@ class UserService
             'role_id' => $data['role_id'],
             'name' => $data['name'],
             'username' => $data['username'],
+            'email' => $data['email'] ?? null,
+            'nomor_telepon' => $data['nomor_telepon'] ?? null,
         ];
 
         // Only update password if provided

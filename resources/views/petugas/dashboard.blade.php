@@ -164,8 +164,8 @@
                                         </p>
                                     </div>
                                 </div>
-                                <a href="{{ route('petugas.pengembalian.create', $peminjaman->id_peminjaman) }}" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-rose-600 rounded-lg hover:bg-rose-700 transition-colors">
-                                    Proses
+                                <a href="{{ route('petugas.peminjaman.show', $peminjaman->id_peminjaman) }}" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-rose-600 rounded-lg hover:bg-rose-700 transition-colors">
+                                    Tindak Lanjut
                                 </a>
                             </div>
                         @endforeach

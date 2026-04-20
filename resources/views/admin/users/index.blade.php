@@ -168,6 +168,7 @@
                         <tr class="border-b border-slate-200 bg-gradient-to-r from-slate-50 via-indigo-50/40 to-slate-50">
                             <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">No</th>
                             <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">User</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">Kontak</th>
                             <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">Username</th>
                             <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-600">Role</th>
                             <th class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-600">Aksi</th>
@@ -205,6 +206,10 @@
                                     </div>
                                 </td>
                                 <td class="whitespace-nowrap px-5 py-3.5">
+                                    <div class="text-sm font-medium text-slate-700">{{ $user->email ?? '-' }}</div>
+                                    <div class="text-xs text-slate-500 mt-0.5">{{ $user->nomor_telepon ?? '-' }}</div>
+                                </td>
+                                <td class="whitespace-nowrap px-5 py-3.5">
                                     <span class="rounded-md bg-slate-100 px-2.5 py-1.5 font-mono text-sm text-slate-600">{{ $user->username }}</span>
                                 </td>
                                 <td class="whitespace-nowrap px-5 py-3.5">
@@ -235,7 +240,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="px-5 py-14 text-center">
+                                <td colspan="6" class="px-5 py-14 text-center">
                                     <div class="flex flex-col items-center">
                                         <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
                                             <svg class="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

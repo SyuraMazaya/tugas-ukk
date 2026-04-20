@@ -45,6 +45,9 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+    Route::get('/verify-2fa', [AuthController::class, 'showTwoFAForm'])->name('verify-2fa');
+    Route::post('/verify-2fa', [AuthController::class, 'verifyTwoFA'])->name('verify-2fa-post');
+    Route::post('/verify-2fa/resend', [AuthController::class, 'resendTwoFA'])->name('verify-2fa-resend');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -102,8 +105,9 @@ Route::prefix('petugas')
 
         // Pengembalian Management
         Route::get('/pengembalian', [PengembalianController::class, 'index'])->name('pengembalian.index');
-        Route::get('/pengembalian/create/{peminjaman}', [PengembalianController::class, 'create'])->name('pengembalian.create');
-        Route::post('/pengembalian/{peminjaman}', [PengembalianController::class, 'store'])->name('pengembalian.store');
+        Route::get('/pengembalian/{id}/approval', [PengembalianController::class, 'approval'])->name('pengembalian.approval');
+        Route::post('/pengembalian/{id}/approval', [PengembalianController::class, 'prosesApproval'])->name('pengembalian.approval.store');
+        Route::post('/pengembalian/{id}/verifikasi-pembayaran', [PengembalianController::class, 'verifikasiPembayaran'])->name('pengembalian.verifikasi-pembayaran');
         Route::get('/pengembalian/{id}', [PengembalianController::class, 'show'])->name('pengembalian.show');
 
         // Laporan
@@ -132,4 +136,7 @@ Route::prefix('peminjam')
         Route::post('/peminjaman', [PeminjamPeminjamanController::class, 'store'])->name('peminjaman.store');
         Route::get('/peminjaman/{id}', [PeminjamPeminjamanController::class, 'show'])->name('peminjaman.show');
         Route::post('/peminjaman/{id}/cancel', [PeminjamPeminjamanController::class, 'cancel'])->name('peminjaman.cancel');
+        Route::post('/peminjaman/{id}/ajukan-pengembalian', [PeminjamPeminjamanController::class, 'ajukanPengembalian'])->name('peminjaman.ajukan-pengembalian');
+        Route::post('/peminjaman/{id}/pembayaran-denda', [PeminjamPeminjamanController::class, 'submitPembayaranDenda'])->name('peminjaman.pembayaran-denda');
+        Route::get('/peminjaman/{id}/pembayaran-denda/pdf', [PeminjamPeminjamanController::class, 'downloadPembayaranPdf'])->name('peminjaman.pembayaran-pdf');
     });

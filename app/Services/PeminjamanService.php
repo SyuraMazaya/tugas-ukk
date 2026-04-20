@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Alat;
 use App\Models\DetailPeminjaman;
 use App\Models\Peminjaman;
+use App\Models\Pengembalian;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -23,11 +24,9 @@ class PeminjamanService
      */
     public function getAll(?string $status = null, ?int $userId = null, int $perPage = 10): LengthAwarePaginator
     {
-        $query = Peminjaman::with(['user', 'petugas', 'detailPeminjaman.alat']);
+        $query = Peminjaman::with(['user', 'petugas', 'detailPeminjaman.alat', 'pengembalian']);
 
-        if ($status) {
-            $query->where('status', $status);
-        }
+        $this->applyStatusFilter($query, $status);
 
         if ($userId) {
             $query->where('user_id', $userId);
@@ -41,7 +40,7 @@ class PeminjamanService
      */
     public function getByUser(User $user, int $perPage = 10): LengthAwarePaginator
     {
-        return Peminjaman::with(['detailPeminjaman.alat', 'pengembalian'])
+        return Peminjaman::with(['detailPeminjaman.alat', 'pengembalian.verifikator'])
             ->where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
@@ -52,12 +51,10 @@ class PeminjamanService
      */
     public function getByUserWithFilter(User $user, ?string $status = null, int $perPage = 10): LengthAwarePaginator
     {
-        $query = Peminjaman::with(['detailPeminjaman.alat', 'pengembalian'])
+        $query = Peminjaman::with(['detailPeminjaman.alat', 'pengembalian.verifikator'])
             ->where('user_id', $user->id);
 
-        if ($status) {
-            $query->where('status', $status);
-        }
+        $this->applyStatusFilter($query, $status);
 
         return $query->orderBy('created_at', 'desc')->paginate($perPage);
     }
@@ -83,15 +80,16 @@ class PeminjamanService
      */
     public function findById(int $id): ?Peminjaman
     {
-        return Peminjaman::with(['user', 'petugas', 'detailPeminjaman.alat', 'pengembalian'])
+        return Peminjaman::with(['user', 'petugas', 'detailPeminjaman.alat', 'pengembalian.verifikator'])
             ->find($id);
     }
 
     /**
      * Create new peminjaman.
-     * 
-     * @param array $data ['tanggal_pinjam', 'tanggal_kembali_rencana', 'catatan']
-     * @param array $items [['alat_id' => int, 'jumlah' => int], ...]
+     *
+     * @param  array  $data  ['tanggal_pinjam', 'tanggal_kembali_rencana', 'catatan']
+     * @param  array  $items  [['alat_id' => int, 'jumlah' => int], ...]
+     *
      * @throws \Exception
      */
     public function create(array $data, array $items): Peminjaman
@@ -99,7 +97,7 @@ class PeminjamanService
         return DB::transaction(function () use ($data, $items) {
             // Validate stock availability for all items
             foreach ($items as $item) {
-                if (!$this->alatService->isStokTersedia($item['alat_id'], $item['jumlah'])) {
+                if (! $this->alatService->isStokTersedia($item['alat_id'], $item['jumlah'])) {
                     $alat = Alat::find($item['alat_id']);
                     throw new \Exception("Stok {$alat->nama_alat} tidak mencukupi. Tersedia: {$alat->stok}");
                 }
@@ -136,19 +134,19 @@ class PeminjamanService
 
     /**
      * Approve peminjaman.
-     * 
+     *
      * @throws \Exception
      */
     public function approve(Peminjaman $peminjaman, User $petugas): Peminjaman
     {
-        if (!$peminjaman->isPending()) {
-            throw new \Exception('Peminjaman tidak dapat disetujui. Status saat ini: ' . $peminjaman->status_label);
+        if (! $peminjaman->isPending()) {
+            throw new \Exception('Peminjaman tidak dapat disetujui. Status saat ini: '.$peminjaman->status_label);
         }
 
         return DB::transaction(function () use ($peminjaman, $petugas) {
             // Validate stock availability again
             foreach ($peminjaman->detailPeminjaman as $detail) {
-                if (!$this->alatService->isStokTersedia($detail->alat_id, $detail->jumlah)) {
+                if (! $this->alatService->isStokTersedia($detail->alat_id, $detail->jumlah)) {
                     throw new \Exception("Stok {$detail->alat->nama_alat} tidak mencukupi.");
                 }
             }
@@ -178,8 +176,8 @@ class PeminjamanService
      */
     public function reject(Peminjaman $peminjaman, User $petugas, ?string $catatan = null): Peminjaman
     {
-        if (!$peminjaman->isPending()) {
-            throw new \Exception('Peminjaman tidak dapat ditolak. Status saat ini: ' . $peminjaman->status_label);
+        if (! $peminjaman->isPending()) {
+            throw new \Exception('Peminjaman tidak dapat ditolak. Status saat ini: '.$peminjaman->status_label);
         }
 
         $peminjaman->update([
@@ -202,8 +200,8 @@ class PeminjamanService
      */
     public function cancel(Peminjaman $peminjaman): Peminjaman
     {
-        if (!$peminjaman->isPending()) {
-            throw new \Exception('Peminjaman tidak dapat dibatalkan. Status saat ini: ' . $peminjaman->status_label);
+        if (! $peminjaman->isPending()) {
+            throw new \Exception('Peminjaman tidak dapat dibatalkan. Status saat ini: '.$peminjaman->status_label);
         }
 
         $peminjaman->update(['status' => 'batal']);
@@ -224,6 +222,9 @@ class PeminjamanService
             'pending' => Peminjaman::where('status', 'pending')->count(),
             'disetujui' => Peminjaman::where('status', 'disetujui')->count(),
             'selesai' => Peminjaman::where('status', 'selesai')->count(),
+            'menunggu_approval_pengembalian' => Pengembalian::where('status', 'menunggu_approval')->count(),
+            'menunggu_pembayaran_denda' => Pengembalian::where('status', 'menunggu_pembayaran')->count(),
+            'menunggu_verifikasi_denda' => Pengembalian::where('status', 'menunggu_verifikasi_pembayaran')->count(),
             'total' => Peminjaman::count(),
         ];
     }
@@ -233,17 +234,27 @@ class PeminjamanService
      */
     public function getUserStatistics(User $user): array
     {
+        $userPengembalian = Pengembalian::whereHas('peminjaman', function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+        });
+
         $totalDenda = Peminjaman::where('user_id', $user->id)
             ->where('status', 'selesai')
             ->whereHas('pengembalian')
             ->with('pengembalian')
             ->get()
-            ->sum(fn($p) => $p->pengembalian->denda ?? 0);
+            ->sum(fn ($p) => $p->pengembalian->denda ?? 0);
 
         return [
             'pending' => Peminjaman::where('user_id', $user->id)->where('status', 'pending')->count(),
             'disetujui' => Peminjaman::where('user_id', $user->id)->where('status', 'disetujui')->count(),
             'selesai' => Peminjaman::where('user_id', $user->id)->where('status', 'selesai')->count(),
+            'menunggu_approval_pengembalian' => (clone $userPengembalian)->where('status', 'menunggu_approval')->count(),
+            'menunggu_pembayaran_denda' => (clone $userPengembalian)->where('status', 'menunggu_pembayaran')->count(),
+            'menunggu_verifikasi_denda' => (clone $userPengembalian)->where('status', 'menunggu_verifikasi_pembayaran')->count(),
+            'denda_belum_lunas' => (clone $userPengembalian)
+                ->whereIn('status', ['menunggu_pembayaran', 'menunggu_verifikasi_pembayaran'])
+                ->sum('denda'),
             'total' => Peminjaman::where('user_id', $user->id)->count(),
             'total_denda' => $totalDenda,
         ];
@@ -254,11 +265,37 @@ class PeminjamanService
      */
     public function getActivePeminjamanByUser(User $user, int $limit = 5): Collection
     {
-        return Peminjaman::with(['detailPeminjaman.alat', 'pengembalian'])
+        return Peminjaman::with(['detailPeminjaman.alat', 'pengembalian.verifikator'])
             ->where('user_id', $user->id)
             ->whereIn('status', ['pending', 'disetujui'])
             ->orderBy('created_at', 'desc')
             ->limit($limit)
             ->get();
+    }
+
+    /**
+     * Apply status filter from peminjaman or pengembalian workflow state.
+     */
+    protected function applyStatusFilter($query, ?string $status): void
+    {
+        if (! $status) {
+            return;
+        }
+
+        $pengembalianStatuses = [
+            'menunggu_approval',
+            'menunggu_pembayaran',
+            'menunggu_verifikasi_pembayaran',
+        ];
+
+        if (in_array($status, $pengembalianStatuses, true)) {
+            $query->whereHas('pengembalian', function ($q) use ($status) {
+                $q->where('status', $status);
+            });
+
+            return;
+        }
+
+        $query->where('status', $status);
     }
 }

@@ -22,8 +22,9 @@ class StorePengembalianRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tanggal_kembali_real' => ['required', 'date'],
+            'status_approval' => ['required', 'in:selesai,menunggu_pembayaran'],
             'catatan_kondisi' => ['nullable', 'string', 'max:1000'],
+            'catatan_approval' => ['nullable', 'string', 'max:1000'],
             'custom_denda' => ['nullable', 'numeric', 'min:0'],
             'kondisi_alat' => ['nullable', 'array'],
             'kondisi_alat.*' => ['nullable', 'in:baik,rusak_ringan,rusak'],
@@ -36,9 +37,10 @@ class StorePengembalianRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'tanggal_kembali_real.required' => 'Tanggal pengembalian wajib diisi.',
-            'tanggal_kembali_real.date' => 'Format tanggal tidak valid.',
+            'status_approval.required' => 'Status approval wajib dipilih.',
+            'status_approval.in' => 'Status approval tidak valid.',
             'catatan_kondisi.max' => 'Catatan kondisi maksimal 1000 karakter.',
+            'catatan_approval.max' => 'Catatan approval maksimal 1000 karakter.',
             'custom_denda.numeric' => 'Nominal denda harus berupa angka.',
             'custom_denda.min' => 'Nominal denda tidak boleh negatif.',
             'kondisi_alat.*.in' => 'Kondisi alat tidak valid.',

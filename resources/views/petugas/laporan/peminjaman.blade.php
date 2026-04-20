@@ -42,6 +42,9 @@
                             <option value="disetujui" {{ $status == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
                             <option value="ditolak" {{ $status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
                             <option value="selesai" {{ $status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                            <option value="menunggu_approval" {{ $status == 'menunggu_approval' ? 'selected' : '' }}>Menunggu Approval Pengembalian</option>
+                            <option value="menunggu_pembayaran" {{ $status == 'menunggu_pembayaran' ? 'selected' : '' }}>Menunggu Pembayaran Denda</option>
+                            <option value="menunggu_verifikasi_pembayaran" {{ $status == 'menunggu_verifikasi_pembayaran' ? 'selected' : '' }}>Menunggu Verifikasi Denda</option>
                         </select>
                         <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                             <svg class="w-5 h-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -78,6 +81,9 @@
                 </thead>
                 <tbody class="divide-y divide-slate-100">
                     @forelse($peminjamans as $index => $peminjaman)
+                        @php
+                            $workflowStatus = $peminjaman->hasPengembalianInProgress() ? $peminjaman->pengembalian->status : $peminjaman->status;
+                        @endphp
                         <tr class="hover:bg-indigo-50/30 transition-colors duration-150">
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-500 font-medium">
                                 {{ $peminjamans->firstItem() + $index }}
@@ -120,7 +126,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <x-badge :status="$peminjaman->status" />
+                                <x-badge :status="$workflowStatus" />
                             </td>
                         </tr>
                     @empty

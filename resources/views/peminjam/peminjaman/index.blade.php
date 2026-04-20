@@ -70,6 +70,9 @@
                     <option value="disetujui" {{ $status == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
                     <option value="ditolak" {{ $status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
                     <option value="selesai" {{ $status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                    <option value="menunggu_approval" {{ $status == 'menunggu_approval' ? 'selected' : '' }}>Menunggu Approval Pengembalian</option>
+                    <option value="menunggu_pembayaran" {{ $status == 'menunggu_pembayaran' ? 'selected' : '' }}>Menunggu Pembayaran Denda</option>
+                    <option value="menunggu_verifikasi_pembayaran" {{ $status == 'menunggu_verifikasi_pembayaran' ? 'selected' : '' }}>Menunggu Verifikasi Denda</option>
                 </select>
             </div>
 
@@ -114,7 +117,8 @@
         @forelse($peminjamans as $peminjaman)
             @php
                 $alatKeywords = $peminjaman->detailPeminjaman->pluck('alat.nama_alat')->filter()->implode(' ');
-                $statusLabel = ucfirst($peminjaman->status);
+                $displayStatus = $peminjaman->hasPengembalianInProgress() ? $peminjaman->pengembalian->status : $peminjaman->status;
+                $statusLabel = str_replace('_', ' ', $displayStatus);
             @endphp
             <x-card
                 class="peminjaman-item border border-slate-100 transition-shadow hover:shadow-md"
@@ -125,7 +129,7 @@
                 <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <div class="mb-2 flex flex-wrap items-center gap-3">
-                            <x-badge :status="$peminjaman->status" />
+                            <x-badge :status="$displayStatus" />
                             <span class="rounded bg-slate-100 px-2 py-0.5 font-mono text-sm text-slate-500">#{{ str_pad($peminjaman->id_peminjaman, 6, '0', STR_PAD_LEFT) }}</span>
                         </div>
 
@@ -147,7 +151,7 @@
                             </span>
                         </p>
 
-                        @if($peminjaman->status === 'disetujui' && $peminjaman->tanggal_kembali_rencana->isPast())
+                        @if($peminjaman->status === 'disetujui' && !$peminjaman->pengembalian && $peminjaman->tanggal_kembali_rencana->isPast())
                             @php
                                 $lateDuration = formatLateDuration($peminjaman->tanggal_kembali_rencana);
                                 $estimatedDenda = hitungDendaKeterlambatan(
@@ -166,15 +170,27 @@
                         @endif
 
                         @if($peminjaman->pengembalian)
-                            <div class="mt-2 inline-flex items-center rounded-lg bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
-                                <svg class="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4" />
-                                </svg>
-                                Dikembalikan: {{ $peminjaman->pengembalian->tanggal_kembali_real->format('d M Y') }}
-                                @if($peminjaman->pengembalian->denda > 0)
-                                    <span class="ml-2 text-rose-600">(Denda: Rp {{ number_format($peminjaman->pengembalian->denda, 0, ',', '.') }})</span>
-                                @endif
-                            </div>
+                            @if($peminjaman->pengembalian->status === 'selesai')
+                                <div class="mt-2 inline-flex items-center rounded-lg bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
+                                    <svg class="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4" />
+                                    </svg>
+                                    Dikembalikan: {{ $peminjaman->pengembalian->tanggal_kembali_real->format('d M Y') }}
+                                    @if($peminjaman->pengembalian->denda > 0)
+                                        <span class="ml-2 text-rose-600">(Denda: Rp {{ number_format($peminjaman->pengembalian->denda, 0, ',', '.') }})</span>
+                                    @endif
+                                </div>
+                            @else
+                                <div class="mt-2 inline-flex items-center rounded-lg bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700">
+                                    <svg class="mr-1.5 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3" />
+                                    </svg>
+                                    {{ $peminjaman->pengembalian->status_label }}
+                                    @if($peminjaman->pengembalian->denda > 0)
+                                        <span class="ml-2 text-rose-600">(Denda: Rp {{ number_format($peminjaman->pengembalian->denda, 0, ',', '.') }})</span>
+                                    @endif
+                                </div>
+                            @endif
                         @endif
                     </div>
 

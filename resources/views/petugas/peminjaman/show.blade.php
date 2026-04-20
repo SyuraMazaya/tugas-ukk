@@ -77,7 +77,13 @@
                         </div>
                         <div class="bg-slate-50 rounded-xl p-4">
                             <dt class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</dt>
-                            <dd class="mt-1"><x-badge :status="$peminjaman->status" /></dd>
+                            <dd class="mt-1">
+                                @if($peminjaman->hasPengembalianInProgress())
+                                    <x-badge :status="$peminjaman->pengembalian->status" />
+                                @else
+                                    <x-badge :status="$peminjaman->status" />
+                                @endif
+                            </dd>
                         </div>
                         @if($peminjaman->petugas)
                             <div class="bg-slate-50 rounded-xl p-4">
@@ -195,12 +201,29 @@
                         <h3 class="ml-3 text-lg font-semibold text-slate-800">Aksi</h3>
                     </div>
                     <div class="p-6">
-                        <a href="{{ route('petugas.pengembalian.create', $peminjaman->id_peminjaman) }}" class="w-full inline-flex items-center justify-center px-4 py-3 text-sm font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors">
-                            <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            Proses Pengembalian
-                        </a>
+                        @if(!$peminjaman->pengembalian)
+                            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                                <p class="text-sm font-semibold text-amber-800">Menunggu Pengajuan Pengembalian</p>
+                                <p class="text-xs text-amber-700 mt-1">Peminjam belum mengajukan pengembalian untuk peminjaman ini.</p>
+                            </div>
+                        @elseif(in_array($peminjaman->pengembalian->status, ['menunggu_approval', 'menunggu_verifikasi_pembayaran']))
+                            <a href="{{ route('petugas.pengembalian.approval', $peminjaman->pengembalian->id) }}" class="w-full inline-flex items-center justify-center px-4 py-3 text-sm font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 transition-colors">
+                                <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Lanjutkan Approval
+                            </a>
+                        @elseif($peminjaman->pengembalian->status === 'menunggu_pembayaran')
+                            <div class="rounded-xl border border-rose-200 bg-rose-50 p-4">
+                                <p class="text-sm font-semibold text-rose-800">Menunggu Pembayaran Denda</p>
+                                <p class="text-xs text-rose-700 mt-1">Peminjam perlu membayar denda sebelum status dapat clear.</p>
+                            </div>
+                        @else
+                            <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+                                <p class="text-sm font-semibold text-emerald-800">Pengembalian Sudah Clear</p>
+                                <p class="text-xs text-emerald-700 mt-1">Tidak ada aksi lanjutan untuk peminjaman ini.</p>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endif
@@ -218,6 +241,10 @@
                     <div class="p-6">
                         <dl class="space-y-4">
                             <div class="bg-slate-50 rounded-xl p-4">
+                                <dt class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Status Workflow</dt>
+                                <dd class="mt-1"><x-badge :status="$peminjaman->pengembalian->status" /></dd>
+                            </div>
+                            <div class="bg-slate-50 rounded-xl p-4">
                                 <dt class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tanggal Kembali</dt>
                                 <dd class="mt-1 text-sm font-medium text-slate-800">{{ $peminjaman->pengembalian->tanggal_kembali_real->format('d M Y') }}</dd>
                             </div>
@@ -227,10 +254,20 @@
                                     Rp {{ number_format($peminjaman->pengembalian->denda, 0, ',', '.') }}
                                 </dd>
                             </div>
+                            <div class="bg-slate-50 rounded-xl p-4">
+                                <dt class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Metode Pembayaran</dt>
+                                <dd class="mt-1 text-sm font-medium text-slate-800">{{ $peminjaman->pengembalian->metode_pembayaran_label }}</dd>
+                            </div>
                             @if($peminjaman->pengembalian->catatan_kondisi)
                                 <div class="bg-slate-50 rounded-xl p-4">
                                     <dt class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Catatan Kondisi</dt>
                                     <dd class="mt-1 text-sm text-slate-700">{{ $peminjaman->pengembalian->catatan_kondisi }}</dd>
+                                </div>
+                            @endif
+                            @if($peminjaman->pengembalian->catatan_approval)
+                                <div class="bg-slate-50 rounded-xl p-4">
+                                    <dt class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Catatan Approval</dt>
+                                    <dd class="mt-1 text-sm text-slate-700">{{ $peminjaman->pengembalian->catatan_approval }}</dd>
                                 </div>
                             @endif
                         </dl>

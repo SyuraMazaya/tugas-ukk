@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Carbon\Carbon;
 
 class Pengembalian extends Model
 {
@@ -17,13 +16,25 @@ class Pengembalian extends Model
         'peminjaman_id',
         'tanggal_kembali_real',
         'denda',
+        'denda_lunas',
+        'status',
         'catatan_kondisi',
+        'catatan_peminjam',
+        'catatan_approval',
+        'metode_pembayaran',
+        'bukti_pembayaran',
+        'tanggal_pembayaran',
         'petugas_id',
+        'diverifikasi_oleh',
+        'tanggal_verifikasi',
     ];
 
     protected $casts = [
         'tanggal_kembali_real' => 'date',
+        'tanggal_pembayaran' => 'datetime',
+        'tanggal_verifikasi' => 'datetime',
         'denda' => 'decimal:2',
+        'denda_lunas' => 'boolean',
     ];
 
     /**
@@ -43,11 +54,19 @@ class Pengembalian extends Model
     }
 
     /**
+     * Get the petugas that verified payment.
+     */
+    public function verifikator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'diverifikasi_oleh');
+    }
+
+    /**
      * Calculate late days.
      */
     public function getHariTerlambatAttribute(): int
     {
-        if (!$this->peminjaman) {
+        if (! $this->peminjaman) {
             return 0;
         }
 
@@ -66,6 +85,64 @@ class Pengembalian extends Model
      */
     public function getDendaFormattedAttribute(): string
     {
-        return 'Rp ' . number_format($this->denda, 0, ',', '.');
+        return 'Rp '.number_format($this->denda, 0, ',', '.');
+    }
+
+    /**
+     * Get status label.
+     */
+    public function getStatusLabelAttribute(): string
+    {
+        return match ($this->status) {
+            'menunggu_approval' => 'Menunggu Approval Pengembalian',
+            'menunggu_pembayaran' => 'Menunggu Pembayaran Denda',
+            'menunggu_verifikasi_pembayaran' => 'Menunggu Verifikasi Pembayaran',
+            'selesai' => 'Clear',
+            default => $this->status,
+        };
+    }
+
+    /**
+     * Get payment method label.
+     */
+    public function getMetodePembayaranLabelAttribute(): string
+    {
+        return match ($this->metode_pembayaran) {
+            'tunai' => 'Tunai',
+            'qris' => 'QRIS',
+            default => '-',
+        };
+    }
+
+    /**
+     * Check if status is waiting for approval.
+     */
+    public function isMenungguApproval(): bool
+    {
+        return $this->status === 'menunggu_approval';
+    }
+
+    /**
+     * Check if status is waiting for payment.
+     */
+    public function isMenungguPembayaran(): bool
+    {
+        return $this->status === 'menunggu_pembayaran';
+    }
+
+    /**
+     * Check if status is waiting for payment verification.
+     */
+    public function isMenungguVerifikasiPembayaran(): bool
+    {
+        return $this->status === 'menunggu_verifikasi_pembayaran';
+    }
+
+    /**
+     * Check if workflow is clear.
+     */
+    public function isSelesai(): bool
+    {
+        return $this->status === 'selesai';
     }
 }

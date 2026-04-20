@@ -109,6 +109,9 @@
         }
         .status-pending { background: #fef3c7; color: #92400e; }
         .status-disetujui { background: #dbeafe; color: #1e40af; }
+        .status-menunggu_approval { background: #fef3c7; color: #92400e; }
+        .status-menunggu_pembayaran { background: #fee2e2; color: #991b1b; }
+        .status-menunggu_verifikasi_pembayaran { background: #dbeafe; color: #1e40af; }
         .status-ditolak { background: #fee2e2; color: #991b1b; }
         .status-selesai { background: #d1fae5; color: #065f46; }
         .footer { 
@@ -201,6 +204,10 @@
             </thead>
             <tbody>
                 @forelse($peminjamans as $index => $peminjaman)
+                    @php
+                        $workflowStatus = $peminjaman->hasPengembalianInProgress() ? $peminjaman->pengembalian->status : $peminjaman->status;
+                        $workflowStatusLabel = $peminjaman->hasPengembalianInProgress() ? $peminjaman->pengembalian->status_label : $peminjaman->status_label;
+                    @endphp
                     <tr>
                         <td style="text-align: center;">{{ $index + 1 }}</td>
                         <td>
@@ -218,8 +225,8 @@
                             @endforeach
                         </td>
                         <td>
-                            <span class="status-badge status-{{ $peminjaman->status }}">
-                                {{ $peminjaman->status_label }}
+                            <span class="status-badge status-{{ $workflowStatus }}">
+                                {{ $workflowStatusLabel }}
                             </span>
                         </td>
                     </tr>

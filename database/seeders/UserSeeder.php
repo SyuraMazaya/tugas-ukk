@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Role;
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -15,9 +14,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminRole = Role::where('name', 'admin')->first();
-        $petugasRole = Role::where('name', 'petugas')->first();
-        $peminjamRole = Role::where('name', 'peminjam')->first();
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $petugasRole = Role::firstOrCreate(['name' => 'petugas']);
+        $peminjamRole = Role::firstOrCreate(['name' => 'peminjam']);
 
         // Create Admin
         User::firstOrCreate(
@@ -25,7 +24,10 @@ class UserSeeder extends Seeder
             [
                 'role_id' => $adminRole->id,
                 'name' => 'Administrator',
+                'email' => 'rasyadrasyad111@gmail.com',
+                'nomor_telepon' => '081234567890',
                 'password' => Hash::make('adminadmin'),
+                'two_fa_enabled' => true,
             ]
         );
 
@@ -35,7 +37,10 @@ class UserSeeder extends Seeder
             [
                 'role_id' => $petugasRole->id,
                 'name' => 'Petugas Inventaris',
+                'email' => 'petugas@sijamat.local',
+                'nomor_telepon' => '081234567891',
                 'password' => Hash::make('adminadmin'),
+                'two_fa_enabled' => true,
             ]
         );
 
@@ -45,7 +50,10 @@ class UserSeeder extends Seeder
             [
                 'role_id' => $peminjamRole->id,
                 'name' => 'Peminjam',
+                'email' => 'peminjam@sijamat.local',
+                'nomor_telepon' => '081234567892',
                 'password' => Hash::make('adminadmin'),
+                'two_fa_enabled' => false,
             ]
         );
     }

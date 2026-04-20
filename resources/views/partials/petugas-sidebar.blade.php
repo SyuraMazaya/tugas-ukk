@@ -40,7 +40,7 @@
     </x-nav-link>
 
     <x-nav-link href="{{ route('petugas.pengembalian.index') }}" :active="request()->routeIs('petugas.pengembalian.*')" :icon="$pengembalianIcon">
-        Kelola Pengembalian
+        Approval Pengembalian
     </x-nav-link>
 </x-sidebar-section>
 

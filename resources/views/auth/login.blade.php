@@ -188,10 +188,10 @@
                 <div class="dot-grid absolute right-12 top-40 h-12 w-12 opacity-45"></div>
 
                 <div class="relative z-10 reveal">
-                    <span class="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold tracking-[0.14em] uppercase">
+                    <span class="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-3 py-1 text-5xl font-semibold tracking-[0.14em] uppercase">
                         SIJAMAT-PRO
                     </span>
-                    <h2 class="mt-6 font-display text-5xl font-semibold leading-tight">
+                    <h2 class="mt-6 font-display text-3xl font-semibold leading-tight">
                         Mulai kelola peminjaman dari sini
                     </h2>
                     <p class="mt-4 max-w-md text-sm leading-relaxed text-blue-50/90">
@@ -224,8 +224,8 @@
                     </div>
 
                     <div class="mb-8">
-                        <h1 class="font-display text-3xl font-semibold text-slate-800">Hello, selamat datang kembali</h1>
-                        <p class="mt-2 text-sm text-slate-500">
+                        <h1 class="font-display text-5xl font-semibold text-slate-800">Hello, selamat datang kembali</h1>
+                        <p class="mt-3 text-xs text-slate-400 tracking-wide">
                             Login untuk mengakses dashboard peminjaman dan pengembalian alat.
                         </p>
                     </div>

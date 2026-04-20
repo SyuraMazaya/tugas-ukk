@@ -13,6 +13,7 @@ class Peminjaman extends Model
     use HasFactory;
 
     protected $table = 'peminjaman';
+
     protected $primaryKey = 'id_peminjaman';
 
     protected $fillable = [
@@ -120,6 +121,26 @@ class Peminjaman extends Model
      */
     public function canBeReturned(): bool
     {
-        return $this->status === 'disetujui';
+        return $this->status === 'disetujui' && $this->pengembalian === null;
+    }
+
+    /**
+     * Check if return workflow is still in progress.
+     */
+    public function hasPengembalianInProgress(): bool
+    {
+        return $this->pengembalian !== null && $this->pengembalian->status !== 'selesai';
+    }
+
+    /**
+     * Get workflow label shown in history and reports.
+     */
+    public function getWorkflowStatusLabelAttribute(): string
+    {
+        if ($this->hasPengembalianInProgress()) {
+            return $this->pengembalian->status_label;
+        }
+
+        return $this->status_label;
     }
 }

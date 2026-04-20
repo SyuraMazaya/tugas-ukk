@@ -31,6 +31,9 @@
                     <option value="disetujui" {{ $status == 'disetujui' ? 'selected' : '' }}>Disetujui</option>
                     <option value="ditolak" {{ $status == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
                     <option value="selesai" {{ $status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                    <option value="menunggu_approval" {{ $status == 'menunggu_approval' ? 'selected' : '' }}>Menunggu Approval Pengembalian</option>
+                    <option value="menunggu_pembayaran" {{ $status == 'menunggu_pembayaran' ? 'selected' : '' }}>Menunggu Pembayaran Denda</option>
+                    <option value="menunggu_verifikasi_pembayaran" {{ $status == 'menunggu_verifikasi_pembayaran' ? 'selected' : '' }}>Menunggu Verifikasi Denda</option>
                 </select>
             </div>
             <div class="flex items-end">
@@ -87,7 +90,11 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <x-badge :status="$peminjaman->status" />
+                                @if($peminjaman->hasPengembalianInProgress())
+                                    <x-badge :status="$peminjaman->pengembalian->status" />
+                                @else
+                                    <x-badge :status="$peminjaman->status" />
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center">
                                 <div class="flex items-center justify-center gap-2">
@@ -97,8 +104,8 @@
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                         </svg>
                                     </a>
-                                    @if($peminjaman->isDisetujui())
-                                        <a href="{{ route('petugas.pengembalian.create', $peminjaman->id_peminjaman) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-emerald-600 bg-emerald-50 hover:bg-emerald-100 transition-colors" title="Proses Pengembalian">
+                                    @if($peminjaman->pengembalian && in_array($peminjaman->pengembalian->status, ['menunggu_approval', 'menunggu_verifikasi_pembayaran']))
+                                        <a href="{{ route('petugas.pengembalian.approval', $peminjaman->pengembalian->id) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg text-emerald-600 bg-emerald-50 hover:bg-emerald-100 transition-colors" title="Approval Pengembalian">
                                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                             </svg>

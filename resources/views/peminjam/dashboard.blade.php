@@ -157,7 +157,11 @@
                             <div class="min-w-0 flex-1">
                                 <div class="mb-1.5 flex flex-wrap items-center gap-2">
                                     <p class="font-semibold text-slate-800">{{ $peminjaman->detailPeminjaman->count() }} alat dipinjam</p>
-                                    <x-badge :status="$peminjaman->status" />
+                                    @if($peminjaman->hasPengembalianInProgress())
+                                        <x-badge :status="$peminjaman->pengembalian->status" />
+                                    @else
+                                        <x-badge :status="$peminjaman->status" />
+                                    @endif
                                 </div>
                                 <p class="flex flex-wrap items-center gap-1 text-sm text-slate-500">
                                     <span class="inline-flex items-center">

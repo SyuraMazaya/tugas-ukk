@@ -72,6 +72,9 @@
                     <option value="disetujui" {{ $status === 'disetujui' ? 'selected' : '' }}>Disetujui</option>
                     <option value="ditolak" {{ $status === 'ditolak' ? 'selected' : '' }}>Ditolak</option>
                     <option value="selesai" {{ $status === 'selesai' ? 'selected' : '' }}>Selesai</option>
+                    <option value="menunggu_approval" {{ $status === 'menunggu_approval' ? 'selected' : '' }}>Menunggu Approval Pengembalian</option>
+                    <option value="menunggu_pembayaran" {{ $status === 'menunggu_pembayaran' ? 'selected' : '' }}>Menunggu Pembayaran Denda</option>
+                    <option value="menunggu_verifikasi_pembayaran" {{ $status === 'menunggu_verifikasi_pembayaran' ? 'selected' : '' }}>Menunggu Verifikasi Denda</option>
                 </select>
             </div>
 
@@ -132,11 +135,12 @@
                                 $userName = $peminjaman->user->name ?? 'User Tidak Ditemukan';
                                 $userUsername = $peminjaman->user->username ?? '-';
                                 $alatNames = $peminjaman->detailPeminjaman->pluck('alat.nama_alat')->filter()->implode(' ');
+                                $workflowStatus = $peminjaman->hasPengembalianInProgress() ? $peminjaman->pengembalian->status : $peminjaman->status;
                             @endphp
                             <tr
                                 class="peminjaman-row transition-colors hover:bg-indigo-50/30"
                                 data-user="{{ strtolower($userName) }}"
-                                data-status="{{ strtolower($peminjaman->status) }}"
+                                data-status="{{ strtolower($workflowStatus) }}"
                                 data-alat="{{ strtolower($alatNames) }}"
                                 data-tanggal-pinjam="{{ strtolower($peminjaman->tanggal_pinjam->format('d M Y')) }}"
                                 data-tanggal-kembali="{{ strtolower($peminjaman->tanggal_kembali_rencana->format('d M Y')) }}"
@@ -187,7 +191,7 @@
                                 </td>
 
                                 <td class="whitespace-nowrap px-5 py-3.5">
-                                    <x-badge :status="$peminjaman->status" />
+                                    <x-badge :status="$workflowStatus" />
                                 </td>
                             </tr>
                         @empty

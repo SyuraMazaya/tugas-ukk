@@ -23,6 +23,11 @@ class User extends Authenticatable
         'name',
         'username',
         'password',
+        'email',
+        'nomor_telepon',
+        'two_fa_enabled',
+        'two_fa_code',
+        'two_fa_code_expires_at',
     ];
 
     /**
@@ -33,6 +38,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'two_fa_code',
     ];
 
     /**
@@ -44,6 +50,8 @@ class User extends Authenticatable
     {
         return [
             'password' => 'hashed',
+            'two_fa_enabled' => 'boolean',
+            'two_fa_code_expires_at' => 'datetime',
         ];
     }
 
@@ -117,6 +125,50 @@ class User extends Authenticatable
     public function hasRole(string|array $roles): bool
     {
         $roles = is_array($roles) ? $roles : [$roles];
+
         return in_array($this->role?->name, $roles);
+    }
+
+    /**
+     * Generate 2FA code
+     */
+    public function generateTwoFACode(): string
+    {
+        $code = str_pad(random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $this->update([
+            'two_fa_code' => $code,
+            'two_fa_code_expires_at' => now()->addMinutes(10),
+        ]);
+
+        return $code;
+    }
+
+    /**
+     * Verify 2FA code
+     */
+    public function verifyTwoFACode(string $code): bool
+    {
+        if ($this->two_fa_code !== $code) {
+            return false;
+        }
+
+        if ($this->two_fa_code_expires_at && $this->two_fa_code_expires_at->isPast()) {
+            return false;
+        }
+
+        $this->update([
+            'two_fa_code' => null,
+            'two_fa_code_expires_at' => null,
+        ]);
+
+        return true;
+    }
+
+    /**
+     * Check if 2FA code is expired
+     */
+    public function isTwoFACodeExpired(): bool
+    {
+        return $this->two_fa_code_expires_at && $this->two_fa_code_expires_at->isPast();
     }
 }

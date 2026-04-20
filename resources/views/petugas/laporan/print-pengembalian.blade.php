@@ -195,6 +195,12 @@
                 <div class="value">{{ $pengembalians->total() }}</div>
                 <div class="label">Total Pengembalian</div>
             </div>
+            @if(!empty($status))
+            <div class="summary-item">
+                <div class="value" style="color: #2563eb;">{{ ucwords(str_replace('_', ' ', $status)) }}</div>
+                <div class="label" style="color: #2563eb;">Filter Status</div>
+            </div>
+            @endif
             <div class="summary-item">
                 <div class="value denda">Rp {{ number_format($totalDenda, 0, ',', '.') }}</div>
                 <div class="label" style="color: #dc2626;">Total Denda</div>
@@ -207,9 +213,11 @@
                     <th style="width: 40px;">No</th>
                     <th>Peminjam</th>
                     <th style="width: 90px;">Tgl Kembali</th>
+                    <th style="width: 130px;">Status Workflow</th>
                     <th style="width: 100px;">Denda</th>
+                    <th style="width: 90px;">Status Denda</th>
+                    <th style="width: 80px;">Metode</th>
                     <th style="width: 120px;">Petugas</th>
-                    <th>Catatan Kondisi</th>
                 </tr>
             </thead>
             <tbody>
@@ -220,6 +228,7 @@
                             <strong>{{ $pengembalian->peminjaman->user->name }}</strong>
                         </td>
                         <td>{{ $pengembalian->tanggal_kembali_real->format('d/m/Y') }}</td>
+                        <td>{{ $pengembalian->status_label }}</td>
                         <td>
                             @if($pengembalian->denda > 0)
                                 <span class="denda-badge denda-ada">
@@ -229,12 +238,13 @@
                                 <span class="denda-badge denda-tidak">Rp 0</span>
                             @endif
                         </td>
-                        <td>{{ $pengembalian->petugas->name }}</td>
-                        <td>{{ $pengembalian->catatan_kondisi ?? '-' }}</td>
+                        <td>{{ $pengembalian->denda_lunas ? 'Lunas' : 'Belum Lunas' }}</td>
+                        <td>{{ $pengembalian->metode_pembayaran_label }}</td>
+                        <td>{{ $pengembalian->petugas?->name ?? '-' }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 30px;">
+                        <td colspan="8" style="text-align: center; padding: 30px;">
                             <em style="color: #94a3b8;">Tidak ada data pengembalian</em>
                         </td>
                     </tr>
