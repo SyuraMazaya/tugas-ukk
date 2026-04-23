@@ -58,6 +58,7 @@ class UserService
             'username' => $data['username'],
             'email' => $data['email'] ?? null,
             'nomor_telepon' => $data['nomor_telepon'] ?? null,
+            'two_fa_enabled' => $data['two_fa_enabled'] ?? false,
             'password' => Hash::make($data['password']),
         ]);
 
@@ -84,6 +85,7 @@ class UserService
             'username' => $data['username'],
             'email' => $data['email'] ?? null,
             'nomor_telepon' => $data['nomor_telepon'] ?? null,
+            'two_fa_enabled' => $data['two_fa_enabled'] ?? false,
         ];
 
         // Only update password if provided

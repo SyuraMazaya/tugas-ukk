@@ -39,6 +39,7 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($this->route('user')),
             ],
             'nomor_telepon' => ['nullable', 'string', 'max:20'],
+            'two_fa_enabled' => ['nullable', 'boolean'],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
         ];
     }

@@ -27,6 +27,7 @@ class StoreUserRequest extends FormRequest
             'username' => ['required', 'string', 'max:255', 'unique:users,username'],
             'email' => ['nullable', 'string', 'email', 'max:255', 'unique:users,email'],
             'nomor_telepon' => ['nullable', 'string', 'max:20'],
+            'two_fa_enabled' => ['nullable', 'boolean'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ];
     }

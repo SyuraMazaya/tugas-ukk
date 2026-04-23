@@ -201,7 +201,14 @@
                                             {{ strtoupper(substr($user->name, 0, 1)) }}
                                         </div>
                                         <div>
-                                            <div class="text-sm font-semibold text-slate-800">{{ $user->name }}</div>
+                                            <div class="text-sm font-semibold text-slate-800 flex items-center gap-2">
+                                                {{ $user->name }}
+                                                @if($user->two_fa_enabled)
+                                                    <span class="inline-flex items-center rounded-md bg-indigo-50 px-1.5 py-0.5 flex-shrink-0 text-[10px] font-semibold text-indigo-700 ring-1 ring-inset ring-indigo-600/20" title="2FA Aktif">
+                                                        2FA
+                                                    </span>
+                                                @endif
+                                            </div>
                                         </div>
                                     </div>
                                 </td>

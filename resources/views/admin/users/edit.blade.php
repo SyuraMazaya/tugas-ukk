@@ -153,6 +153,26 @@
             </div>
 
             <!-- Password Change Section -->
+            <!-- 2FA & Password Change Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 space-y-6 md:space-y-0 relative z-10 mb-6">
+                <div class="md:col-span-2 md:w-1/2 md:pr-3">
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        Autentikasi 2 Langkah (2FA) <span class="text-rose-500">*</span>
+                    </label>
+                    <select name="two_fa_enabled" class="w-full px-4 py-3 border @error('two_fa_enabled') border-rose-500 @else border-slate-200 @enderror rounded-lg shadow-sm text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors">
+                        <option value="0" {{ old('two_fa_enabled', $user->two_fa_enabled ? '1' : '0') == '0' ? 'selected' : '' }}>Nonaktif</option>
+                        <option value="1" {{ old('two_fa_enabled', $user->two_fa_enabled ? '1' : '0') == '1' ? 'selected' : '' }}>Aktif</option>
+                    </select>
+                    <p class="mt-1 text-xs text-slate-500">Jika aktif, user butuh verifikasi email saat login.</p>
+                    @error('two_fa_enabled')
+                        <div class="flex items-center gap-2 mt-2 text-rose-600 text-sm">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18.101 12.93a1 1 0 00-1.414-1.414L10 16.586l-6.687-6.687a1 1 0 00-1.414 1.414l8 8a1 1 0 001.414 0l10-10z" clip-rule="evenodd" /></svg>
+                            {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+            </div>
+
             <div class="p-4 bg-gradient-to-r from-violet-50 to-fuchsia-50 border border-violet-200 rounded-lg">
                 <div class="flex items-start gap-3">
                     <svg class="w-5 h-5 text-violet-500 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

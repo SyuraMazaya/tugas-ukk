@@ -36,20 +36,6 @@ class AuthController extends Controller
 
             // If 2FA is enabled, redirect to verification page
             if ($user->two_fa_enabled) {
-                // Check if 2FA was verified in the last 12 hours (using cookie)
-                if ($request->hasCookie('2fa_verified_' . $user->id)) {
-                    $request->session()->regenerate();
-
-                    // Redirect based on role
-                    if ($user->isAdmin()) {
-                        return redirect()->intended(route('admin.dashboard'));
-                    } elseif ($user->isPetugas()) {
-                        return redirect()->intended(route('petugas.dashboard'));
-                    } else {
-                        return redirect()->intended(route('peminjam.dashboard'));
-                    }
-                }
-
                 if (blank($user->email)) {
                     Auth::logout();
 
@@ -156,16 +142,13 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $request->session()->forget('2fa_user_id');
 
-            // Set cookie for 12 hours (720 minutes)
-            $cookie = cookie('2fa_verified_' . $user->id, true, 720);
-
             // Redirect based on role
             if ($user->isAdmin()) {
-                return redirect()->intended(route('admin.dashboard'))->withCookie($cookie);
+                return redirect()->intended(route('admin.dashboard'));
             } elseif ($user->isPetugas()) {
-                return redirect()->intended(route('petugas.dashboard'))->withCookie($cookie);
+                return redirect()->intended(route('petugas.dashboard'));
             } else {
-                return redirect()->intended(route('peminjam.dashboard'))->withCookie($cookie);
+                return redirect()->intended(route('peminjam.dashboard'));
             }
         }
 
